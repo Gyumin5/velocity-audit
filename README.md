@@ -44,7 +44,7 @@ The release stage needs the public datasets, which we do not redistribute — ob
 
 Audited releases: HeLiPR, Oxford RobotCar, nuScenes, KITTI raw, KITTI-360, Boreas, Pit30M, and KAIST Complex Urban (the non-inertial reference-physics boundary case).
 
-Analysis outputs already committed under `results/` correspond to the tables and figures in the paper, so the reported numbers can be checked without re-downloading the source datasets.
+Analysis outputs already committed under `results/` correspond to the tables and figures in the paper, so the reported numbers can be checked without re-downloading the source datasets. `results/audited_sequences.csv` is the complete list of the 285 sequence/run/scene IDs the audit ran on (115 across the seven main releases and KAIST Complex Urban, plus the three pose-only check sets), with the sample count for each.
 
 The per-frame streams behind those aggregates (pose, published velocity, and each estimator's output per sequence) are **not** redistributed here: they contain the source releases' own pose and velocity content, and several of those releases are distributed under non-commercial or no-redistribution terms that this repository's MIT licence cannot cover. The scripts regenerate them from each dataset's own copy.
 

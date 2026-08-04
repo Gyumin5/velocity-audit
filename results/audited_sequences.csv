@@ -1,0 +1,286 @@
+dataset,id,n_samples
+HeLiPR,bridge01,21439
+HeLiPR,dcc05,10810
+HeLiPR,kaist05,12477
+HeLiPR,riverside05,8551
+HeLiPR,roundabout01,27296
+HeLiPR,town01,24140
+Oxford RobotCar,2014-11-11-11-06-25_rtk,18761
+Oxford RobotCar,2014-12-05-11-09-10_rtk,2940
+Oxford RobotCar,2015-02-13-09-16-26_rtk,22101
+Oxford RobotCar,2015-03-24-13-47-33_rtk,22321
+Oxford RobotCar,2015-05-19-14-06-38_rtk,22071
+Oxford RobotCar,2015-07-08-13-37-17_rtk,27171
+Oxford RobotCar,2015-08-12-15-04-18_rtk,22911
+Oxford RobotCar,2015-08-17-13-30-19_rtk,15051
+Oxford RobotCar,2015-08-27-16-07-13_rtk,27600
+Oxford RobotCar,2015-11-02-10-45-59_rtk,29931
+Oxford RobotCar,2015-11-12-11-22-05_rtk,21701
+nuScenes,scene-0001,193
+nuScenes,scene-0053,191
+nuScenes,scene-0103,194
+nuScenes,scene-0158,193
+nuScenes,scene-0234,193
+nuScenes,scene-0285,195
+nuScenes,scene-0347,190
+nuScenes,scene-0398,196
+nuScenes,scene-0450,195
+nuScenes,scene-0505,195
+nuScenes,scene-0557,195
+nuScenes,scene-0612,198
+nuScenes,scene-0664,199
+nuScenes,scene-0730,195
+nuScenes,scene-0798,195
+nuScenes,scene-0860,198
+nuScenes,scene-0914,197
+nuScenes,scene-0977,195
+nuScenes,scene-1031,199
+nuScenes,scene-1081,195
+KITTI raw,2011_09_30_drive_0028_sync,5177
+KITTI raw,2011_10_03_drive_0027_sync,4544
+KITTI raw,2011_10_03_drive_0034_sync,4663
+KITTI-360,2013_05_28_drive_0000_extract,12040
+KITTI-360,2013_05_28_drive_0002_extract,20133
+KITTI-360,2013_05_28_drive_0003_extract,1084
+KITTI-360,2013_05_28_drive_0004_extract,12116
+KITTI-360,2013_05_28_drive_0005_extract,7055
+KITTI-360,2013_05_28_drive_0006_extract,10143
+KITTI-360,2013_05_28_drive_0007_extract,3553
+KITTI-360,2013_05_28_drive_0008_extract,9237
+KITTI-360,2013_05_28_drive_0009_extract,14665
+KITTI-360,2013_05_28_drive_0010_extract,4003
+Boreas,boreas-2020-11-26-13-58,10755
+Boreas,boreas-2021-06-17-17-52,12749
+Boreas,boreas-2021-09-02-11-42,10736
+Pit30M,00682fa6_00,23771
+Pit30M,00682fa6_01,16688
+Pit30M,00682fa6_02,48848
+Pit30M,00682fa6_03,33185
+Pit30M,00a05077_00,14164
+Pit30M,00a05077_01,96018
+Pit30M,00a05077_02,2556
+Pit30M,00a05077_03,215507
+Pit30M,00a05077_04,15035
+Pit30M,0106abc2_00,112558
+Pit30M,0106abc2_01,6596
+Pit30M,017be362_00,33761
+Pit30M,017be362_01,1715
+Pit30M,017be362_02,23505
+Pit30M,017be362_03,4220
+Pit30M,017be362_04,35530
+Pit30M,017be362_05,113360
+Pit30M,017be362_06,6746
+Pit30M,017be362_07,70670
+Pit30M,01959149_00,126487
+Pit30M,01959149_01,18252
+Pit30M,01959149_02,1825
+Pit30M,01959149_03,20715
+Pit30M,01959149_04,2219
+Pit30M,01959149_05,58198
+Pit30M,01959149_06,70250
+Pit30M,01959149_07,50670
+Pit30M,01d09d4c_00,2982
+Pit30M,01d09d4c_01,114728
+Pit30M,01e21524_00,14002
+Pit30M,01e21524_01,6414
+Pit30M,01e21524_02,10184
+Pit30M,01e21524_03,4863
+Pit30M,01e21524_04,6175
+Pit30M,01e21524_05,1394
+Pit30M,01e21524_06,58733
+Pit30M,01e21524_07,5164
+Pit30M,01e21524_08,57369
+Pit30M,01e21524_09,9481
+Pit30M,01e21524_10,13734
+Pit30M,01e21524_11,60708
+Pit30M,01e21524_12,49072
+Pit30M,01e86404_00,2415
+Pit30M,01e86404_01,288591
+Pit30M,020829cb_00,22668
+Pit30M,020829cb_01,156553
+Pit30M,020829cb_02,18230
+Pit30M,0209f084_00,10476
+Pit30M,0209f084_01,124471
+Pit30M,021286dc_00,14620
+Pit30M,021286dc_01,47636
+Pit30M,021286dc_02,46155
+Pit30M,024e8e83_00,261490
+KAIST Complex Urban,urban00,11874
+KAIST Complex Urban,urban01,13681
+KAIST Complex Urban,urban02,8871
+KAIST Complex Urban,urban03,9000
+KAIST Complex Urban,urban04,21503
+KAIST Complex Urban,urban05,7118
+KAIST Complex Urban,urban07,4442
+KAIST Complex Urban,urban08,2872
+KAIST Complex Urban,urban11,7884
+Argoverse 2,02678d04-cc9f-3148-9f95-1ba66347dff9,160
+Argoverse 2,02a00399-3857-444e-8db3-a8f58489c394,160
+Argoverse 2,04994d08-156c-3018-9717-ba0e29be8153,160
+Argoverse 2,05fa5048-f355-3274-b565-c0ddc547b315,160
+Argoverse 2,070bbf42-31d3-3aa9-aca4-c262afc9077d,160
+Argoverse 2,0aa4e8f5-2f9a-39a1-8f80-c2fdde4405a2,160
+Argoverse 2,0b5142c1-420b-3fea-9e98-b87327ae22c6,160
+Argoverse 2,0b86f508-5df9-4a46-bc59-5b9536dbde9f,160
+Argoverse 2,0bae3b5e-417d-3b03-abaa-806b433233b8,160
+Argoverse 2,0c3bad78-9f1e-395d-a376-2eb7499229fd,160
+Argoverse 2,0fb7276f-ecb5-3e5b-87a8-cc74c709c715,160
+Argoverse 2,11ba4e81-c26f-3cd1-827d-b6913bcef64e,160
+Argoverse 2,15ec0778-826e-3ed7-9775-54fbf66997f4,160
+Argoverse 2,182ba3f7-b89a-36cc-ae40-32a341b0d3e9,160
+Argoverse 2,185d3943-dd15-397a-8b2e-69cd86628fb7,160
+Argoverse 2,19350c96-623d-4d77-af96-f8c23f00c358,160
+Argoverse 2,19f53e16-9f99-3035-9672-7e860f3b0048,160
+Argoverse 2,1da4a0aa-22ae-3958-856d-05303de1f576,160
+Argoverse 2,1f434d15-8745-3fba-9c3e-ccb026688397,160
+Argoverse 2,201fe83b-7dd7-38f4-9d26-7b4a668638a9,160
+Argoverse 2,20bcd747-ef60-391a-9f4a-ae99f049c260,160
+Argoverse 2,20d47f81-46e8-3adf-a0ca-564fbb5c599d,160
+Argoverse 2,20dd185d-b4eb-3024-a17a-b4e5d8b15b65,200
+Argoverse 2,214e388e-cbd7-3dde-a204-d2ec42298808,160
+Argoverse 2,22052525-4f85-3fe8-9d7d-000a9fffce36,160
+Argoverse 2,24642607-2a51-384a-90a7-228067956d05,160
+Argoverse 2,25e5c600-36fe-3245-9cc0-40ef91620c22,160
+Argoverse 2,27be7d34-ecb4-377b-8477-ccfd7cf4d0bc,160
+Argoverse 2,27c03d98-6ac3-38a3-ba5e-102b184d01ef,160
+Argoverse 2,280269f9-6111-311d-b351-ce9f63f88c81,160
+Argoverse 2,29a00842-ead2-3050-b587-c5ef507e4125,160
+Argoverse 2,2c652f9e-8db8-3572-aa49-fae1344a875b,160
+Argoverse 2,2e3f2ae7-9ab9-3aef-a3ce-a0a97a0cb1ab,160
+Argoverse 2,2f2321d2-7912-3567-a789-25e46a145bda,160
+Argoverse 2,2ff4f798-78d9-3384-87e9-61928aa4cb6d,160
+Argoverse 2,335aabef-269e-3211-a99d-2c3a3a8f8475,160
+Argoverse 2,36aec72e-5086-376c-b109-295b128e77e1,160
+Argoverse 2,3b3570b4-7b0b-3268-a571-b0889dbf40b6,160
+Argoverse 2,3bffdcff-c3a7-38b6-a0f2-64196d130958,160
+Argoverse 2,3de5b5d6-68c4-3c95-84ed-be7c83d829f8,160
+Argoverse 2,42f92807-0c5e-3397-bd45-9d5303b4db2a,160
+Argoverse 2,44adf4c4-6064-362f-94d3-323ed42cfda9,160
+Argoverse 2,47286726-5dd4-4e26-bd2d-5324f429e445,160
+Argoverse 2,472a240a-10cd-39cd-8681-558f7c7cf868,160
+Argoverse 2,4c33fc38-5e59-34f8-96ba-4e5a404d3988,160
+Argoverse 2,4e3fedbb-847c-3d5b-8a62-c9ff84550985,160
+Argoverse 2,51bbdd4d-3065-34ae-b369-b6e0444f34db,160
+Argoverse 2,52071780-5758-3ed4-8835-0d64ecdc5575,160
+Argoverse 2,52971a8a-ed62-3bfd-bcd4-ca3308b594e0,160
+Argoverse 2,544a8102-0ef5-3044-921e-dc0544370376,160
+Argoverse 2,5589de60-1727-3e3f-9423-33437fc5da4b,160
+Argoverse 2,58e82365-03bc-3b2f-b55a-a4ad0e3e792d,160
+Argoverse 2,58fed0d4-97d5-469b-89a4-4394838e10c7,160
+Argoverse 2,5c0584a3-52a6-3029-b6ff-ca45a19d8aa6,160
+Argoverse 2,5f278cdd-ca28-3c53-8f5c-04e62308811d,160
+Argoverse 2,5f8f4a26-59b1-3f70-bcab-b5e3e615d3bc,160
+Argoverse 2,65387aee-4490-38b9-8f4f-1fc43bd4ac06,160
+Argoverse 2,6803104a-bb06-402e-8471-e5af492db0a8,160
+Argoverse 2,6aaf5b08-9f84-3a2e-8a32-2e50e5e11a3c,160
+Argoverse 2,6c932547-4c11-31d7-b8ef-0c16a13dbfc3,160
+Argoverse 2,6f128f23-ee40-3ea9-8c50-c9cdb9d3e8b6,160
+Argoverse 2,7039e410-b5ab-35aa-96bc-2c4b89d3c5e3,160
+Argoverse 2,72cf3ca1-1a9e-3254-bca0-29c62521e454,160
+Argoverse 2,7606de8d-486c-4916-9cbb-002ee966f834,160
+Argoverse 2,76916359-96f4-3274-81fe-bb145d497c11,160
+Argoverse 2,77574006-881f-3bc8-bbb6-81d79cf02d83,160
+Argoverse 2,78683234-e6f1-3e4e-af52-6f839254e4c0,160
+Argoverse 2,78da7b7e-8ddf-3c7d-8716-eaa890106dd3,160
+Argoverse 2,78f7cb5c-9d51-34f0-b356-9b3d83263c75,160
+Argoverse 2,7a2c222d-addc-30b2-aac6-596cb65a22e3,160
+Argoverse 2,7dbc2eac-5871-3480-b322-246e03d954d2,160
+Argoverse 2,7de2e535-81df-3d5f-a5ca-62e4b940eb54,160
+Argoverse 2,7e4d67b3-c3cc-3288-afe5-043602ea3c70,160
+Argoverse 2,7fab2350-7eaf-3b7e-a39d-6937a4c1bede,160
+Argoverse 2,858d739b-a0ba-35aa-bafc-4f7988bcad17,160
+Argoverse 2,8749f79f-a30b-3c3f-8a44-dbfa682bbef1,160
+Argoverse 2,87ca3d9f-f317-3efb-b1cb-aaaf525227e5,160
+Argoverse 2,88f47a10-87b4-3ea8-a0c7-a07d825b647d,160
+Argoverse 2,91aab547-1912-3b8e-8e7f-df3b202147bf,160
+Argoverse 2,92b900b1-ac4a-3d41-b118-e42c66382c91,160
+Argoverse 2,95bf6003-7068-3a78-a0c0-9e470a06e60f,160
+Argoverse 2,96dd6923-994c-3afe-9830-b15bdfd60f64,160
+Argoverse 2,9a448a80-0e9a-3bf0-90f3-21750dfef55a,160
+Argoverse 2,9bb1f857-8b61-369f-a537-484c1323ae32,160
+Argoverse 2,9e9bcfb7-601d-3d80-bc12-ef7025174beb,160
+Argoverse 2,9f871fb4-3b8e-34b3-9161-ed961e71a6da,160
+Argoverse 2,a060c4c1-b9fc-39c1-9d30-d93a124c9066,160
+Argoverse 2,a1589ae2-2678-310e-91cc-c4b512cd7fa5,160
+Argoverse 2,a33a44fb-6008-3dc2-b7c5-2d27b70741e8,160
+Argoverse 2,a7636fca-4d9e-3052-bef2-af0ce5d1df74,160
+Argoverse 2,a91d4c7b-bf55-3a0e-9eba-1a43577bcca8,160
+Argoverse 2,adf9a841-e0db-30ab-b5b3-bf0b61658e1e,160
+Argoverse 2,b19f3c1a-a84a-3a2d-8d1b-8a4ae201020b,160
+Argoverse 2,b2053fdc-0b94-30bc-aee7-5bc6fb7e9f52,160
+Argoverse 2,b213af37-7d89-342d-ae39-8a3c72159a01,160
+Argoverse 2,b50c4763-5d1e-37f4-a009-2244aeebabcd,160
+Argoverse 2,b5a7ff7e-d74a-3be6-b95d-3fc0042215f6,160
+Argoverse 2,b6500255-eba3-3f77-acfd-626c07aa8621,160
+Argoverse 2,b6e967f6-92bc-3bf5-99c9-1b0c4649fd67,160
+Argoverse 2,b8489c02-60d0-3f44-a3b4-9de62830d666,160
+Argoverse 2,b87683ae-14c5-321f-8af3-623e7bafc3a7,160
+Argoverse 2,ba67827f-6b99-3d2a-96ab-7c829eb999bb,160
+Argoverse 2,bbd19ca1-805a-3c22-8df3-cd7501aa06f3,160
+Argoverse 2,bd90cd1a-38b6-33b7-adec-ba7d4207a8c0,160
+Argoverse 2,bdb9d309-f14b-3ff6-ad1f-5d3f3f95a13e,160
+Argoverse 2,bf360aeb-1bbd-3c1e-b143-09cf83e4f2e4,160
+Argoverse 2,bf382949-3515-3c16-b505-319442937a43,160
+Argoverse 2,c222c78d-b574-4b9d-82e1-96a4f3f8bb27,160
+Argoverse 2,c2d44a70-9fd4-3298-ad0a-c4c9712e6f1e,160
+Argoverse 2,c85a88a8-c916-30a7-923c-0c66bd3ebbd3,160
+Argoverse 2,c865c156-0f26-411c-a16c-be985333f675,160
+Argoverse 2,c8ec7be0-92aa-3222-946e-fbcf398c841e,160
+Argoverse 2,cae56e40-8470-3c9c-af75-6e444189488f,160
+Argoverse 2,cd22abca-9150-3279-87a4-cb00ba517372,160
+Argoverse 2,cf5aaa11-4f92-3377-a7a2-861f305023eb,160
+Argoverse 2,d1395998-7e8a-417d-91e9-5ca6ec045ee1,159
+Argoverse 2,d3ca0450-2167-38fb-b34b-449741cb38f3,160
+Argoverse 2,d46ff5df-95e8-32da-a0d7-87f7b976a959,160
+Argoverse 2,d5d6f11c-3026-3e0e-9d67-c111233e22de,160
+Argoverse 2,d5fa4d54-74ba-369c-a758-636441ad7f07,160
+Argoverse 2,d770f926-bca8-31de-9790-73fbb7b6a890,160
+Argoverse 2,d89f80be-76d0-3853-8daa-76605cf4ce5e,160
+Argoverse 2,da036982-92bf-36a8-b880-4ccf4e20b74e,160
+Argoverse 2,dafe14f5-825c-4e7a-9009-6dfdfdd5b030,160
+Argoverse 2,dc9077b9-2fe0-3d18-9b97-8067ff090874,160
+Argoverse 2,de56b100-508b-3479-81fe-735349f8e8de,160
+Argoverse 2,de9cf513-a0cd-3389-bc79-3f9f6f261317,160
+Argoverse 2,ded5ef6e-46ea-3a66-9180-18a6fa0a2db4,160
+Argoverse 2,dfc32963-1524-34f4-9f5e-0292f0f223ae,160
+Argoverse 2,dfc6d65f-20f5-389d-a5cd-81c1c7ecb11f,160
+Argoverse 2,e0ea281b-6956-3605-b720-71b54ec87d25,160
+Argoverse 2,e13c06cb-cd01-380e-946f-6d92ac1af49d,160
+Argoverse 2,e1d68dde-22a9-3918-a526-0850b21ff2eb,160
+Argoverse 2,e2e921fe-e489-3656-a0a2-5e17bd399ddf,160
+Argoverse 2,e42aa296-0e5d-4733-87ec-131a82f917bc,160
+Argoverse 2,e50e7698-de3d-355f-aca2-eddd09c09533,160
+Argoverse 2,e72ef05c-8b94-3885-a34f-fff3b2b954b4,160
+Argoverse 2,e8c9fd64-fdd2-422d-a2a2-6f47500d1d12,160
+Argoverse 2,ecbe6def-7560-352c-8822-b2b92613e1e4,160
+Argoverse 2,eec284b2-840a-3c75-aa42-04d2e309bbe1,160
+Argoverse 2,f1275002-842e-3571-8f7d-05816bc7cf56,160
+Argoverse 2,f2576c8a-da9b-450e-88cf-a70af1b0eadf,160
+Argoverse 2,f292cc5c-7a90-360d-b62a-074c643bdf59,160
+Argoverse 2,f3cd0d0d-8b71-3266-9732-d9f0d5778eb6,160
+Argoverse 2,f4c94798-4d77-36ab-bdc5-c1194e5e7aff,160
+Argoverse 2,f668074d-d6c6-3ea7-a7b5-aad0a1203b03,160
+Argoverse 2,f6cc0ebf-fc6a-3bf2-8bcb-76d8c43f194e,160
+Argoverse 2,fbd62533-2d32-3c95-8590-7fd81bd68c87,160
+Argoverse 2,fbee355f-8878-31fa-8ac8-b9a45a3f130a,160
+Argoverse 2,ff0dbfc5-8a7b-3a6e-8936-e5e812e45408,160
+DurLAR,DurLAR_20210716_S,60
+DurLAR,DurLAR_20210901_S,60
+DurLAR,DurLAR_20211012_S,60
+DurLAR,DurLAR_20211208_S,60
+DurLAR,DurLAR_20211209_S,60
+Newer College,01_short_experiment_registered,15301
+Newer College,02_long_experiment_registered,26559
+Newer College,05_quad_dynamics_registered,3954
+Newer College,06_dynamic_spinning_registered,1197
+Newer College,gt-mine-easy_tum,142
+Newer College,gt-mine-hard_tum,1904
+Newer College,gt-mine-medium_tum,149
+Newer College,gt-nc-cloister_tum,2787
+Newer College,gt-nc-park_tum,15694
+Newer College,gt-nc-quad-easy_tum,1988
+Newer College,gt-nc-quad-medium_tum,1907
+Newer College,gt-nc-stairs_tum,1190
+Newer College,gt_math_easy_tum,2160
+Newer College,gt_math_hard_tum,2438
+Newer College,gt_math_medium_tum,1770
