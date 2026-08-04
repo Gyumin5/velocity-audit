@@ -27,7 +27,7 @@ DATASETS = [
     ("KITTI raw", "kitti"),
     ("KITTI-360", "kitti360"),
     ("Boreas", "boreas"),
-    ("Pit30M", "pit30m"),
+    ("Pit30M", "pit30m_10hz"),
 ]
 
 METHODS = ("v_central", "v_family_a_W5")

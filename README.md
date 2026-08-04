@@ -12,6 +12,8 @@ The audit runs in two stages, and the separation between them is the point.
 
 **Stage 2 — release measurement (truth unknown).** That characterized probe is applied unchanged — `W=5`, `p=3`, no per-dataset retuning — to each public release. The residual against the release's published velocity is read as a measurement *of the release*, never as a score for the probe and never as an accuracy verdict. Where pose and velocity share a smoother, the audit reports the case as undecidable rather than as agreement.
 
+"Unchanged" fixes the window's **duration**, not its sample count: `W=5` spans 1.0 s at the 10 Hz analysis cadence, and a release published at a higher rate is decimated to that cadence before the probe runs. Pit30M publishes at 100 Hz, where the same `W=5` would span 0.1 s and leave the probe barely distinguishable from central differencing; `scripts/pit30m_build_10hz.py` puts it on the analysis cadence, and `scripts/pit30m_stride_offset_sensitivity.py` shows the choice of decimation phase moves the result by 5.2 percentage points and the smoothness ratio not at all.
+
 No step treats a published velocity as ground truth. None of the audited releases ships an absolute speed truth, which is why this is a consistency audit and not an accuracy evaluation.
 
 ## Layout
@@ -46,7 +48,22 @@ Audited releases: HeLiPR, Oxford RobotCar, nuScenes, KITTI raw, KITTI-360, Borea
 
 Analysis outputs already committed under `results/` correspond to the tables and figures in the paper, so the reported numbers can be checked without re-downloading the source datasets. `results/audited_sequences.csv` is the complete list of the 285 sequence/run/scene IDs the audit ran on (115 across the seven main releases and KAIST Complex Urban, plus the three pose-only check sets), with the sample count for each.
 
+The generators for the paper's main tables are:
+
+| script | produces | backs |
+| --- | --- | --- |
+| `build_crossds_tables.py` | `crossds_recomputed.csv`, `multimetric_recomputed.csv`, `latency_sweep.csv` | the cross-dataset table, the multi-metric table, the latency paragraph |
+| `curvature_bins_all_datasets.py` | `curvature_bins_all_datasets.csv` | the curvature-bin figure |
+| `degradation_stress_all.py` | `degradation_stress.csv` | the pose-degradation sweep |
+| `integrated_drift.py` | `integrated_drift.csv` | the residual-versus-drift paragraph |
+| `pit30m_build_10hz.py` | `results/pit30m_10hz/` | Pit30M's analysis series |
+| `verify_crossds_table.py` | `crossds_verify.csv` | an independent recomputation of all seven rows |
+
+These consume the per-frame streams under `results/<release>/`, which are the stage this reproduction path starts from — see the note on redistribution below. Earlier tags of this repository shipped the aggregate CSVs without their generators, and its Pit30M script ran at an analysis cadence that did not match the paper's window-duration rule; both are fixed here, and the Pit30M numbers changed as a result.
+
 The per-frame streams behind those aggregates (pose, published velocity, and each estimator's output per sequence) are **not** redistributed here: they contain the source releases' own pose and velocity content, and several of those releases are distributed under non-commercial or no-redistribution terms that this repository's MIT licence cannot cover. The scripts regenerate them from each dataset's own copy.
+
+One consequence is worth stating plainly. Our own copies of the source releases are no longer available, so the reproduction path we exercised for this revision runs from per-frame stream to published number, not from source archive to published number. The stage before it — reading each release and emitting its per-frame stream — is unchanged from earlier tags and has been checked only against the aggregates it produced then. Anyone with the source releases can exercise the full path; we could not.
 
 ## Scope and limitations
 

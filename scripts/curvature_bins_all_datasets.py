@@ -31,7 +31,9 @@ DATASETS = [
     ("KITTI raw", "kitti",        "v_oxts"),
     ("KITTI-360", "kitti360",     "v_ref"),
     ("Boreas",    "boreas",       "v_ref"),
-    ("Pit30M",    "pit30m",       "v_ref"),
+    # Pit30M is read from its 10 Hz analysis series (scripts/pit30m_build_10hz.py)
+    # so that W=5 spans the same 1.0 s as on the releases published at 10 Hz.
+    ("Pit30M",    "pit30m_10hz",  "v_ref"),
 ]
 
 BIN_EDGES = np.array([0.0, 1e-3, 5e-3, 2e-2, 0.1, 1.0])
