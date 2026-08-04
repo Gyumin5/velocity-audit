@@ -5,7 +5,7 @@ Layout rules (per ai-debate consensus):
   - generous left padding so dataset names never touch bars
   - value labels INSIDE the bar (right-aligned for positive, left-aligned for negative)
   - short bars get the label outside the bar tip (clamped within xlim)
-  - 2-4x band label sits at the top of panel (b), not in the bar grid
+  - observed-range band label sits at the top of panel (b), not in the bar grid
   - regime meaning is documented in the caption, not in an inline legend
 """
 from __future__ import annotations
@@ -19,16 +19,21 @@ import matplotlib.pyplot as plt
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
+# Values below are the committed audit outputs, rounded for display:
+#   delta_pct            <- results/crossds_recomputed.csv (KAIST CU: results/kaist_cu/per_sequence.csv)
+#   smoothness ratio     <- results/multimetric_recomputed.csv, M3_c / M3_f
+#   pose-only ratios     <- results/{av2,durlar,ncd}/per_sequence.csv, ratio of medians
+# Keep this table in sync with those files; the paper quotes the same numbers.
 DATASETS = [
     ("HeLiPR",     "separated",     -46, 3.7),
-    ("Oxford",     "alg. separated",-40, 4.2),
-    ("nuScenes",   "weak",           -6, 3.2),
-    ("KITTI raw",  "online",         -3, 2.3),
-    ("KITTI-360",  "online",         -1, 1.6),
+    ("Oxford",     "alg. separated",-40, 4.1),
+    ("nuScenes",   "weak",           -6, 3.1),
+    ("KITTI raw",  "online",         -2, 2.3),
+    ("KITTI-360",  "online",          0, 1.8),
     ("Boreas",     "batch",        +102, 2.2),
-    ("Pit30M",     "batch",          +1, 1.8),
-    ("KAIST CU",   "wheel-encoder",  +5, 2.3),
-    ("AV2",        "pose-only",    None, 3.2),
+    ("Pit30M",     "batch",           0, 1.1),
+    ("KAIST CU",   "wheel-encoder",  +5, 2.5),
+    ("AV2",        "pose-only",    None, 3.1),
     ("DurLAR",     "pose-only",    None, 2.0),
     ("NCD",        "pose-only",    None, 1.9),
 ]
@@ -118,13 +123,13 @@ def main():
     # ---- (b) M_3^sm ratio ----
     y_b = list(range(len(DATASETS)))
     xlim_b = (0, 6.0)
-    axB.axvspan(2.0, 4.0, color=(0.90, 0.95, 0.90), zorder=0)
+    axB.axvspan(1.8, 4.1, color=(0.90, 0.95, 0.90), zorder=0)
     for i, (_, regime, _, ratio) in enumerate(DATASETS):
         color = REGIME_COLOR[regime]
         axB.barh(i, ratio, color=color, edgecolor="k", linewidth=0.4, height=0.66,
                  zorder=2)
         _label_right_of_bar(axB, ratio, i, f"{ratio:.1f}", xlim_b, font=9.0)
-    axB.text(3.0, -0.85, r"$2$–$4\times$ band", fontsize=8.0, color="0.25",
+    axB.text(2.95, -0.85, r"$1.8$–$4.1\times$ observed range", fontsize=8.0, color="0.25",
              ha="center", va="center", fontweight="bold")
     axB.set_yticks(y_b)
     axB.set_yticklabels([d[0] for d in DATASETS], fontsize=9.0)
