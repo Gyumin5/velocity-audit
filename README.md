@@ -50,6 +50,10 @@ Analysis outputs already committed under `results/` correspond to the tables and
 
 The empirical statements are about the seven releases examined. The protocol is stated so that others can run it, but its conclusions are not claimed to extend to releases we did not audit. Provenance labels are assigned by reading each release's documentation before the probe is run; where documentation does not support a label, the protocol returns `unclassified` rather than guessing, and that release is excluded from the coupling comparison.
 
+## AI assistance
+
+Claude (Anthropic) was used as a coding assistant in implementing portions of the processing and analysis scripts in this repository, and as a writing aid for parts of the manuscript text. The research questions, study design, audit methodology, experimental execution, and technical conclusions were directed by the authors, and all AI-assisted code was inspected, tested, and executed by the authors against the underlying data. The same disclosure appears in the acknowledgment section of the paper.
+
 ## License
 
 MIT (see `LICENSE`). The datasets themselves are not covered by this license and remain subject to their own terms.
