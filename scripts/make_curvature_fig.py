@@ -5,9 +5,9 @@ Two side-by-side panels (no broken axis, no grouped bars):
   Left  (wide): 6 driving datasets as line+marker. y-range close to data.
   Right (narrow): Boreas only. Visually preserved as the 7th audit point.
 
-Plot-speaks-for-itself: lines show how the gain behaves across curvature bins.
+Plot-speaks-for-itself: lines show how the residual change behaves across curvature bins.
 The flat-or-decreasing shape in the left panel makes the "no high-curvature
-concentration" message visible without reading the caption.
+concentration" observation visible without reading the caption.
 """
 from __future__ import annotations
 from pathlib import Path
@@ -22,8 +22,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 BINS = ["low", "med-low", "med", "med-high", "high"]
+# HeLiPR row recomputed from results/helipr/curvature_bins_all.csv using the
+# paper's aggregation convention (median over sequences per method, then the
+# reduction of the medians). The remaining rows come from the per-dataset
+# curvature runs, whose per-bin intermediates are not redistributed here.
 DATA = {
-    "HeLiPR":    [43, 38, 30, 18, -4],
+    "HeLiPR":    [48, 46, 30, 22, 0],
     "Oxford":    [40, 38, 38, 38, 36],
     "nuScenes":  [6, 5, 4, 3, 2],
     "KITTI raw": [2, 2, 1, 4, 6],
