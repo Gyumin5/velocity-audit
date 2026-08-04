@@ -46,14 +46,7 @@ Audited releases: HeLiPR, Oxford RobotCar, nuScenes, KITTI raw, KITTI-360, Borea
 
 Analysis outputs already committed under `results/` correspond to the tables and figures in the paper, so the reported numbers can be checked without re-downloading the source datasets.
 
-The per-frame streams behind those aggregates -- pose, published velocity, and every estimator's output for all 115 audited sequences -- are attached to the [`v1.0-access` release](https://github.com/Gyumin5/velocity-audit/releases/tag/v1.0-access) as `velref-per-frame-v1.0.tar.gz` (218 MB), rather than committed to git. Unpack it over `results/` and the derived tables regenerate from scratch:
-
-```bash
-curl -L -o per-frame.tar.gz https://github.com/Gyumin5/velocity-audit/releases/download/v1.0-access/velref-per-frame-v1.0.tar.gz
-tar xzf per-frame.tar.gz            # expands into results/<dataset>/
-python scripts/curvature_bins_all_datasets.py
-python scripts/make_curvature_fig.py
-```
+The per-frame streams behind those aggregates (pose, published velocity, and each estimator's output per sequence) are **not** redistributed here: they contain the source releases' own pose and velocity content, and several of those releases are distributed under non-commercial or no-redistribution terms that this repository's MIT licence cannot cover. The scripts regenerate them from each dataset's own copy.
 
 ## Scope and limitations
 
