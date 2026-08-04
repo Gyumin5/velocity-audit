@@ -22,19 +22,37 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 BINS = ["low", "med-low", "med", "med-high", "high"]
-# HeLiPR row recomputed from results/helipr/curvature_bins_all.csv using the
-# paper's aggregation convention (median over sequences per method, then the
-# reduction of the medians). The remaining rows come from the per-dataset
-# curvature runs, whose per-bin intermediates are not redistributed here.
-DATA = {
-    "HeLiPR":    [48, 46, 30, 22, 0],
-    "Oxford":    [40, 38, 38, 38, 36],
-    "nuScenes":  [6, 5, 4, 3, 2],
-    "KITTI raw": [2, 2, 1, 4, 6],
-    "KITTI-360": [1, 1, 0, 0, -1],
-    "Pit30M":    [0, 0, 0, 0, 0],
-    "Boreas":    [-95, -105, -100, -110, -115],
-}
+BIN_LABELS = ["0e+00-1e-03", "1e-03-5e-03", "5e-03-2e-02", "2e-02-1e-01", "1e-01-1e+00"]
+ORDER = ["HeLiPR", "Oxford", "nuScenes", "KITTI raw", "KITTI-360", "Pit30M", "Boreas"]
+
+
+def load_data(csv_path):
+    """Per-bin residual reduction (%) of Family A W=5 vs central differencing.
+
+    Read from results/curvature_bins_all_datasets.csv, which is produced by
+    scripts/curvature_bins_all_datasets.py from the committed per-frame files.
+    Aggregation matches the rest of the paper: median over sequences per
+    method, then the reduction of those medians.
+    """
+    import csv as _csv
+    from statistics import median
+    acc = {}
+    with open(csv_path) as fh:
+        for r in _csv.DictReader(fh):
+            acc.setdefault((r["dataset"], r["kappa_bin"], r["method"]), []).append(
+                float(r["rmse_vs_ref"]))
+    out = {}
+    for ds in ORDER:
+        row = []
+        for b in BIN_LABELS:
+            c = acc.get((ds, b, "central"))
+            f = acc.get((ds, b, "family_a_W5"))
+            row.append(float("nan") if not c or not f
+                       else (median(c) - median(f)) / median(c) * 100.0)
+        out[ds] = row
+    return out
+
+
 # Grayscale-safe: every dataset has a distinct (marker, linestyle).
 STYLE = {
     "HeLiPR":    dict(color="#1f77b4", marker="o", linestyle="-",  linewidth=1.4, markersize=5.0),
@@ -48,7 +66,9 @@ STYLE = {
 
 
 def main():
-    out = REPO_ROOT / "paper" / "figures" / "fig_curvature_bins.pdf"
+    repo = REPO_ROOT
+    DATA = load_data(repo / "results" / "curvature_bins_all_datasets.csv")
+    out = repo / "paper" / "figures" / "fig_curvature_bins.pdf"
     out_png = out.with_suffix(".png")
 
     fig, (ax_main, ax_bor) = plt.subplots(
