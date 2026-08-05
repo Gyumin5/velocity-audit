@@ -20,7 +20,7 @@ No step treats a published velocity as ground truth. None of the audited release
 
 ```
 src/velref/       probe, metrics, dataset readers, audit core
-scripts/          per-dataset processing and figure generation (26 scripts)
+scripts/          per-dataset processing, table generation, and figures (38 scripts)
 results/          the analysis outputs the paper reports
 tests/            synthetic truth-known regression test
 ```
@@ -57,13 +57,17 @@ The generators for the paper's main tables are:
 | `degradation_stress_all.py` | `degradation_stress.csv` | the pose-degradation sweep |
 | `integrated_drift.py` | `integrated_drift.csv` | the residual-versus-drift paragraph |
 | `pit30m_build_10hz.py` | `results/pit30m_10hz/` | Pit30M's analysis series |
+| `pit30m_native_window_control.py` | `pit30m_native_control.csv` | the no-decimation control on Pit30M |
+| `per_frame_manifest.py` | `per_frame_manifest.csv` | content digests of every stream the analysis consumed |
 | `verify_crossds_table.py` | `crossds_verify.csv` | an independent recomputation of all seven rows |
 
 These consume the per-frame streams under `results/<release>/`, which are the stage this reproduction path starts from — see the note on redistribution below. Earlier tags of this repository shipped the aggregate CSVs without their generators, and its Pit30M script ran at an analysis cadence that did not match the paper's window-duration rule; both are fixed here, and the Pit30M numbers changed as a result.
 
 The per-frame streams behind those aggregates (pose, published velocity, and each estimator's output per sequence) are **not** redistributed here: they contain the source releases' own pose and velocity content, and several of those releases are distributed under non-commercial or no-redistribution terms that this repository's MIT licence cannot cover. The scripts regenerate them from each dataset's own copy.
 
-One consequence is worth stating plainly. Our own copies of the source releases are no longer available, so the reproduction path we exercised for this revision runs from per-frame stream to published number, not from source archive to published number. The stage before it — reading each release and emitting its per-frame stream — is unchanged from earlier tags and has been checked only against the aggregates it produced then. Anyone with the source releases can exercise the full path; we could not.
+One boundary is worth stating plainly. The reproduction path exercised for this revision runs from per-frame stream to published number, not from source archive to published number: we no longer hold local copies of the source releases, and the stage before it — reading each release and emitting its per-frame stream — is unchanged from earlier tags and has been checked only against the aggregates it produced then. Anyone holding the source releases can exercise the full path.
+
+So that boundary is checkable rather than merely declared, `results/per_frame_manifest.csv` records a content digest of all 159 per-frame streams the analysis consumed. The digest is taken over the numeric columns — `t`, `x`, `y`, and the published velocity for the input side, the estimator outputs for the derived side — rather than over the file bytes, so it does not depend on the parquet writer or its version, and values are rounded to 1e-9 first so a different BLAS build does not register as a mismatch. Regenerate a stream from your own copy of a release, run `scripts/per_frame_manifest.py`, and compare: if the input digest matches, any downstream disagreement is in the analysis rather than in the extraction.
 
 ## Scope and limitations
 

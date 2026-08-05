@@ -16,27 +16,54 @@ matplotlib.rcParams["pdf.fonttype"] = 42
 matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+
+# Every number plotted here is read from the committed audit outputs; nothing is
+# transcribed by hand, so the figure cannot drift out of step with the tables:
+#   seven main releases  <- results/crossds_recomputed.csv  (delta_pct)
+#                           results/multimetric_recomputed.csv (M3_c / M3_f)
+#   KAIST CU boundary    <- results/kaist_cu/per_sequence.csv
+#   pose-only checks     <- results/{av2,durlar,ncd}/per_sequence.csv
+# The smoothness convention is the ratio of per-dataset medians, matching the
+# paper's tables; the shaded band is the observed range over the seven releases.
+import pandas as pd
+
+RESULTS = Path(__file__).resolve().parents[1] / "results"
+
+REGIME_OF = {
+    "HeLiPR": "separated", "Oxford": "alg. separated",
+    "nuScenes": "weak", "KITTI": "online", "KITTI-360": "online",
+    "Boreas": "batch", "Pit30M": "batch",
+}
+DISPLAY_NAME = {"KITTI": "KITTI raw"}
 
 
-# Values below are the committed audit outputs, rounded for display:
-#   delta_pct            <- results/crossds_recomputed.csv (KAIST CU: results/kaist_cu/per_sequence.csv)
-#   smoothness ratio     <- results/multimetric_recomputed.csv, M3_c / M3_f
-#   pose-only ratios     <- results/{av2,durlar,ncd}/per_sequence.csv, ratio of medians
-# Keep this table in sync with those files; the paper quotes the same numbers.
-DATASETS = [
-    ("HeLiPR",     "separated",     -46, 3.7),
-    ("Oxford",     "alg. separated",-40, 4.1),
-    ("nuScenes",   "weak",           -6, 3.1),
-    ("KITTI raw",  "online",         -2, 2.3),
-    ("KITTI-360",  "online",          0, 1.8),
-    ("Boreas",     "batch",        +102, 2.2),
-    ("Pit30M",     "batch",           0, 1.1),
-    ("KAIST CU",   "wheel-encoder",  +5, 2.5),
-    ("AV2",        "pose-only",    None, 3.1),
-    ("DurLAR",     "pose-only",    None, 2.0),
-    ("NCD",        "pose-only",    None, 1.9),
-]
+def _ratio_of_medians(path: Path, num: str, den: str) -> float:
+    d = pd.read_csv(path)
+    return float(d[num].median() / d[den].median())
+
+
+def _build_datasets():
+    cross = pd.read_csv(RESULTS / "crossds_recomputed.csv").set_index("dataset")
+    multi = pd.read_csv(RESULTS / "multimetric_recomputed.csv").set_index("dataset")
+    rows = []
+    for name, regime in REGIME_OF.items():
+        rows.append((DISPLAY_NAME.get(name, name), regime,
+                     float(cross.loc[name, "delta_pct"]),
+                     float(multi.loc[name, "M3_c"] / multi.loc[name, "M3_f"])))
+    main_ratios = [r[3] for r in rows]
+
+    kaist = RESULTS / "kaist_cu" / "per_sequence.csv"
+    rows.append(("KAIST CU", "wheel-encoder",
+                 (_ratio_of_medians(kaist, "family_a_W5_M4", "central_M4") - 1.0) * 100.0,
+                 _ratio_of_medians(kaist, "central_M3sm", "family_a_W5_M3sm")))
+    for label, sub in (("AV2", "av2"), ("DurLAR", "durlar"), ("NCD", "ncd")):
+        rows.append((label, "pose-only", None,
+                     _ratio_of_medians(RESULTS / sub / "per_sequence.csv",
+                                       "central_M3sm", "family_a_W5_M3sm")))
+    return rows, (min(main_ratios), max(main_ratios))
+
+
+DATASETS, SMOOTH_BAND = _build_datasets()
 
 REGIME_COLOR = {
     "separated":      "#2a8a3a",
@@ -64,7 +91,7 @@ def _label_right_of_bar(ax, value, y, text, xlim, font=8.0):
 
 
 def main():
-    out = REPO_ROOT / "paper" / "figures" / "fig_regime_overview.pdf"
+    out = Path("/home/gmoh/av-ros/test/velocity/paper/figures/fig_regime_overview.pdf")
     out.parent.mkdir(parents=True, exist_ok=True)
 
     # Wide two-column figure: more horizontal room → labels outside bars stay readable
@@ -91,7 +118,8 @@ def main():
         color, hatch = _sign_color(regime, delta)
         axA.barh(i, delta, color=color, edgecolor="k", linewidth=0.4, height=0.66,
                  hatch=hatch)
-        _label_right_of_bar(axA, delta, i, f"{delta:+d}%", xlim_a, font=9.0)
+        lbl = f"{round(delta):+.0f}%" if round(delta) != 0 else "0%"
+        _label_right_of_bar(axA, delta, i, lbl, xlim_a, font=9.0)
     axA.axvline(0, color="0.15", lw=1.2, zorder=3)
     # Coupling-band separator lines + direct group labels (left of bars)
     # Group boundaries (after each contiguous regime cluster in a_data):
@@ -123,13 +151,14 @@ def main():
     # ---- (b) M_3^sm ratio ----
     y_b = list(range(len(DATASETS)))
     xlim_b = (0, 6.0)
-    axB.axvspan(1.8, 4.1, color=(0.90, 0.95, 0.90), zorder=0)
+    band_lo, band_hi = (round(v, 1) for v in SMOOTH_BAND)
+    axB.axvspan(band_lo, band_hi, color=(0.90, 0.95, 0.90), zorder=0)
     for i, (_, regime, _, ratio) in enumerate(DATASETS):
         color = REGIME_COLOR[regime]
         axB.barh(i, ratio, color=color, edgecolor="k", linewidth=0.4, height=0.66,
                  zorder=2)
         _label_right_of_bar(axB, ratio, i, f"{ratio:.1f}", xlim_b, font=9.0)
-    axB.text(2.95, -0.85, r"$1.8$–$4.1\times$ observed range", fontsize=8.0, color="0.25",
+    axB.text(2.95, -0.85, rf"${band_lo}$–${band_hi}\times$ observed range", fontsize=8.0, color="0.25",
              ha="center", va="center", fontweight="bold")
     axB.set_yticks(y_b)
     axB.set_yticklabels([d[0] for d in DATASETS], fontsize=9.0)
