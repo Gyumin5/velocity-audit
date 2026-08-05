@@ -42,7 +42,7 @@ The synthetic stage needs no external data:
 python scripts/run_synthetic_l10.py
 ```
 
-The release stage needs the public datasets, which we do not redistribute — obtain each from its own maintainers under its own license. Scripts expect dataset roots under `/mnt/Data/velref/<dataset>` by default; the argparse-based ones accept `--root` to point elsewhere, and the rest have the default at the top of the file.
+The release stage needs the public datasets, which we do not redistribute — obtain each from its own maintainers under its own license. Scripts expect dataset roots under `/mnt/Data/velref/<dataset>`. That path is our own machine's layout, not a requirement: the argparse-based scripts take `--root`, and the rest carry the default as a constant at the top of the file. Nothing else in the repository depends on it.
 
 Audited releases: HeLiPR, Oxford RobotCar, nuScenes, KITTI raw, KITTI-360, Boreas, Pit30M, and KAIST Complex Urban (the non-inertial reference-physics boundary case).
 
@@ -56,7 +56,7 @@ The generators for the paper's main tables are:
 | `curvature_bins_all_datasets.py` | `curvature_bins_all_datasets.csv` | the curvature-bin figure |
 | `degradation_stress_all.py` | `degradation_stress.csv` | the pose-degradation sweep |
 | `integrated_drift.py` | `integrated_drift.csv` | the residual-versus-drift paragraph |
-| `pit30m_build_10hz.py` | `results/pit30m_10hz/` | Pit30M's analysis series |
+| `pit30m_build_10hz.py` | `results/pit30m_10hz/` (local only, see below) | Pit30M's analysis series |
 | `pit30m_native_window_control.py` | `pit30m_native_control.csv` | the no-decimation control on Pit30M |
 | `native_window_control.py` | `boreas_native_control.csv`, `nuscenes_x20_native_control.csv` | the same control on Boreas and nuScenes, plus the source-to-stream reproduction check |
 | `per_frame_manifest.py` | `per_frame_manifest.csv` | content digests of every stream the analysis consumed |
@@ -68,6 +68,62 @@ The generators for the paper's main tables are:
 Every figure in the paper is drawn by one of the last three, and each of those
 reads its values from the CSVs above rather than carrying a transcribed copy, so
 a figure cannot drift out of step with the table it illustrates.
+
+One row in that table means something different from the rest. Every `produces`
+entry above is a file committed here except `results/pit30m_10hz/`, which is a
+per-frame stream and therefore not redistributed (see below). The script writes
+it into your own working copy; what is committed for it is its digest, in
+`results/per_frame_manifest.csv`.
+
+### Getting from a release to a per-frame stream
+
+The table above starts at the per-frame stream. These are the scripts that
+produce that stream from each release's own files, which is the stage you run
+first if you are working from the source datasets:
+
+| release | script |
+| --- | --- |
+| HeLiPR | `run_helipr_layer23.py` |
+| Oxford RobotCar | `download_oxford.py` (fetch), `run_oxford_layer23.py` |
+| nuScenes | `run_nuscenes_layer23.py` |
+| KITTI raw | `run_kitti_layer23.py` |
+| KITTI-360 | `process_kitti360.py` |
+| Boreas | `run_boreas_layer23.py` |
+| Pit30M | `process_pit30m.py`, then `pit30m_build_10hz.py` |
+| KAIST Complex Urban | `process_kaist_cu_multi.py` |
+| Argoverse 2, DurLAR | `process_av2_durlar.py` |
+| Newer College | `process_ncd.py` |
+
+Three pairs of scripts look like duplicates and are not. `process_kaist_cu.py`
+handles the single `urban08` sequence and `process_kaist_cu_multi.py` runs all
+of them and aggregates — the paper's nine KAIST CU sequences come from the
+latter. `spectral_check.py` prints the illustrative `roundabout01` case;
+`spectral_check_all.py` produces the six-sequence median and IQR the paper
+reports. `run_dr_experiment.py` covers HeLiPR alone and `run_dr_all.py` covers
+all seven releases; both write into `results/dr/`, and the drift paragraph in
+the paper uses `integrated_drift.py`.
+
+`scripts/decimation_threat_control.py` is kept for the record and is not behind
+any claim in the paper: it pushes the aliasing threat further instead of
+removing it, and the direct control in `native_window_control.py` superseded it
+at v1.3-access. Its own docstring carries the caveat that makes its low-`W` rows
+uninterpretable.
+
+### What is under `results/`
+
+- Top level — the aggregate CSVs the paper's tables and figures are computed
+  from, plus `audited_sequences.csv` and `per_frame_manifest.csv`.
+- `l10/`, `l10_sg_sweep/` — Stage 1. The synthetic truth-known sweep and the
+  Savitzky–Golay comparison sweep, both reproducible with no external data.
+- `helipr/` — the in-depth separated-regime case study, including the spectral
+  and degradation checks.
+- `av2/`, `durlar/`, `ncd/` — the three pose-only external checks reported as
+  supplementary evidence for the smoothness band.
+- `kaist_cu/` — the non-inertial reference-physics boundary case.
+- `dr/` — dead-reckoning drift, the downstream-consequence check.
+- `oxford/`, `oxford_x11/`, `nuscenes_x20/`, `boreas/`, `kitti360/`, `pit30m/`
+  — per-release summaries. The `_x11` and `_x20` suffixes mark the runs at those
+  releases' native rates rather than at the 10 Hz analysis cadence.
 
 These consume the per-frame streams under `results/<release>/`, which are the stage this reproduction path starts from — see the note on redistribution below. Earlier tags of this repository shipped the aggregate CSVs without their generators, and its Pit30M script ran at an analysis cadence that did not match the paper's window-duration rule; both are fixed here, and the Pit30M numbers changed as a result.
 
@@ -83,8 +139,15 @@ The empirical statements are about the seven releases examined. The protocol is 
 
 ## AI assistance
 
-Claude (Anthropic) was used as a coding assistant in implementing portions of the processing and analysis scripts in this repository, and as a writing aid for parts of the manuscript text. The research questions, study design, audit methodology, experimental execution, and technical conclusions were directed by the authors, and all AI-assisted code was inspected, tested, and executed by the authors against the underlying data. The same disclosure appears in the acknowledgment section of the paper.
+Claude (Anthropic) was used as a coding assistant in implementing portions of the processing and analysis scripts in this repository, and as a writing aid for parts of the manuscript text. The research questions, study design, audit methodology, experimental execution, and technical conclusions were directed by the authors, and all AI-assisted code was inspected, tested, and executed by the authors against the underlying data. The paper carries the corresponding disclosure in its acknowledgment section.
 
 ## License
 
-MIT (see `LICENSE`). The datasets themselves are not covered by this license and remain subject to their own terms.
+MIT (see `LICENSE`), and it covers the code in this repository only.
+
+The audited datasets are not covered by it and are not redistributed here. Each
+remains subject to its own licence and terms of use, which take precedence, and
+so does anything you derive from your own copy of one. The aggregate CSVs
+committed under `results/` are summary statistics computed from those releases
+rather than extracts of them; if your intended use goes beyond checking the
+numbers in the paper, check the terms of the release the numbers came from.

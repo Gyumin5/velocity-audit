@@ -1,5 +1,28 @@
 # Changelog
 
+## v1.5-access
+
+Documentation only; no code, data, or result changed.
+
+An audit of this repository from a reader's point of view turned up one entry
+that promised something the repository does not contain and several things it
+does contain without saying why. `results/pit30m_10hz/` appeared in the
+generator table beside eight rows that name committed files, but it is a
+per-frame stream and so is not redistributed; the row now says so, and points at
+the digest that is committed in its place.
+
+The rest is material that was here all along and undocumented. The scripts that
+turn a source release into a per-frame stream — the first stage of the
+reproduction path, and the one the paper leans on — now have a table mapping
+each release to its script. Three pairs that look like duplicates are not, and
+the README now says which member of each pair the paper's numbers come from.
+Every directory under `results/` is now accounted for, including the Stage-1
+sweeps and the pose-only checks. `decimation_threat_control.py` is marked as
+superseded and behind no claim in the paper.
+
+The licence section now separates the code, which is MIT, from the releases and
+anything derived from them, which are not.
+
 ## v1.4-access
 
 Every figure in the paper is now drawn by a script in this repository, and every
