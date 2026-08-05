@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.4-access
+
+Every figure in the paper is now drawn by a script in this repository, and every
+one of those scripts reads its values from the committed CSVs.
+
+`make_two_stage_figure.py` is new. Figure 1 of the paper previously reused a
+render of the same chart as Figure 2, carrying numbers from an earlier tag under
+a caption that described something else entirely; the figure it describes — the
+barrier between the two stages, and what each stage is allowed to consult — did
+not exist as a drawing. It does now, and the release count in it is read from
+`crossds_recomputed.csv` rather than typed, so it cannot drift the way its
+predecessor did.
+
+`make_curvature_fig.py` draws at the width the figure is placed at in the paper
+instead of at a smaller canvas scaled down. The previous canvas was scaled to
+about a third of its natural width, which took its 7--9 pt labels below 3 pt on
+the page. Nothing about the data or the aggregation changed.
+
 ## v1.3-access
 
 The no-decimation control now covers all three releases published above the

@@ -18,8 +18,6 @@ matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt
 import numpy as np
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-
 
 BINS = ["low", "med-low", "med", "med-high", "high"]
 BIN_LABELS = ["0e+00-1e-03", "1e-03-5e-03", "5e-03-2e-02", "2e-02-1e-01", "1e-01-1e+00"]
@@ -66,14 +64,17 @@ STYLE = {
 
 
 def main():
-    repo = REPO_ROOT
+    repo = Path(__file__).resolve().parents[1]
     DATA = load_data(repo / "results" / "curvature_bins_all_datasets.csv")
     out = repo / "paper" / "figures" / "fig_curvature_bins.pdf"
     out_png = out.with_suffix(".png")
 
+    # Drawn at the width it is placed at in the paper (\textwidth = 505pt =
+    # 7.01 in), so the point sizes below are the point sizes the reader sees.
+    # Scaling a smaller canvas up or down here silently changes them.
     fig, (ax_main, ax_bor) = plt.subplots(
-        1, 2, figsize=(6.0, 3.0),
-        gridspec_kw={"width_ratios": [4.5, 1.2], "wspace": 0.32},
+        1, 2, figsize=(7.0, 3.1),
+        gridspec_kw={"width_ratios": [4.2, 1.5], "wspace": 0.26},
     )
 
     xs = np.arange(len(BINS))
@@ -83,14 +84,16 @@ def main():
         ax_main.plot(xs, DATA[ds], label=ds, **STYLE[ds])
 
     ax_main.axhline(0, color="0.45", lw=0.6)
-    ax_main.set_ylim(-10, 50)
+    # Headroom above the highest series (HeLiPR, 48%) so the legend sits over
+    # empty axes rather than over the Oxford line.
+    ax_main.set_ylim(-12, 66)
     ax_main.set_xticks(xs)
     ax_main.set_xticklabels(BINS, fontsize=8)
     ax_main.set_xlabel(r"curvature $|\kappa|$ bin", fontsize=9)
     ax_main.set_ylabel("RMSE reduction vs central (%)\n(positive = closer to published)", fontsize=8)
     ax_main.tick_params(axis="y", labelsize=8)
     ax_main.grid(True, axis="y", lw=0.3, ls=":", color="0.7")
-    ax_main.legend(fontsize=7, loc="upper right", ncol=2, framealpha=0.92,
+    ax_main.legend(fontsize=8, loc="upper right", ncol=3, framealpha=1.0,
                    handlelength=2.2, columnspacing=0.9)
     ax_main.set_title("6 audited datasets", fontsize=9, pad=2)
 
@@ -99,7 +102,10 @@ def main():
     ax_bor.axhline(0, color="0.45", lw=0.6)
     ax_bor.set_ylim(-130, 10)
     ax_bor.set_xticks(xs)
-    ax_bor.set_xticklabels(BINS, fontsize=7, rotation=45)
+    # ha="right" anchors each rotated label at its tick; without it the labels
+    # centre on the tick and the last two run into each other.
+    ax_bor.set_xticklabels(BINS, fontsize=8, rotation=45, ha="right",
+                           rotation_mode="anchor")
     ax_bor.tick_params(axis="y", labelsize=8)
     ax_bor.grid(True, axis="y", lw=0.3, ls=":", color="0.7")
     ax_bor.set_title("Boreas (batch)", fontsize=9, pad=2)

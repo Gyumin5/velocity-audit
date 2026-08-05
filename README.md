@@ -20,7 +20,7 @@ No step treats a published velocity as ground truth. None of the audited release
 
 ```
 src/velref/       probe, metrics, dataset readers, audit core
-scripts/          per-dataset processing, table generation, and figures (40 scripts)
+scripts/          per-dataset processing, table generation, and figures (41 scripts)
 results/          the analysis outputs the paper reports
 tests/            synthetic truth-known regression test
 ```
@@ -61,6 +61,13 @@ The generators for the paper's main tables are:
 | `native_window_control.py` | `boreas_native_control.csv`, `nuscenes_x20_native_control.csv` | the same control on Boreas and nuScenes, plus the source-to-stream reproduction check |
 | `per_frame_manifest.py` | `per_frame_manifest.csv` | content digests of every stream the analysis consumed |
 | `verify_crossds_table.py` | `crossds_verify.csv` | an independent recomputation of all seven rows |
+| `make_two_stage_figure.py` | `fig_two_stage.pdf` | Figure 1, the two-stage schematic |
+| `make_curvature_fig.py` | `fig_curvature_bins.pdf` | Figure 2, the curvature-binned response |
+| `make_regime_figure.py` | `fig_regime_overview.pdf` | Figure 3, the regime overview |
+
+Every figure in the paper is drawn by one of the last three, and each of those
+reads its values from the CSVs above rather than carrying a transcribed copy, so
+a figure cannot drift out of step with the table it illustrates.
 
 These consume the per-frame streams under `results/<release>/`, which are the stage this reproduction path starts from — see the note on redistribution below. Earlier tags of this repository shipped the aggregate CSVs without their generators, and its Pit30M script ran at an analysis cadence that did not match the paper's window-duration rule; both are fixed here, and the Pit30M numbers changed as a result.
 
