@@ -1,5 +1,52 @@
 # Changelog
 
+## v1.3-access
+
+The no-decimation control now covers all three releases published above the
+analysis cadence, not just Pit30M, and the reproduction path for two of them
+runs from the source release rather than from our committed stream.
+
+### The control that removes decimation, on Boreas and nuScenes
+
+`scripts/native_window_control.py` re-obtains Boreas (200 Hz) and nuScenes
+(50 Hz) from their public buckets, reproduces the 10 Hz analysis series, and
+then reaches the same 1.0 s window without decimating at all — `W=100` and
+`W=25` respectively. The qualitative reading survives in both cases; the
+magnitude does not.
+
+| release | decimated (paper) | native | latency behaviour | curvature bins |
+| --- | --- | --- | --- | --- |
+| Boreas | +102% | +129.7% (200 Hz, W=100) | collapses to ≤1.8 pp at every non-zero shift, both settings | all five increase, both settings |
+| nuScenes | −5.6% | −16.2% (50 Hz, W=25) | does not collapse, same shape, ~2.9x the scale | four of five decrease at 10 Hz (the highest-curvature bin is +7%); all five decrease natively |
+| Pit30M | +77% | +140% (100 Hz, W=50) | collapses to ≤0.5 pp | all five increase |
+
+So stride decimation is not what produces any of the three readings. What the
+control does establish is that the reported *magnitudes* — and the smoothness
+ratio especially, which reaches 11x on Boreas and 32x on nuScenes natively
+against the 1.7x–4.1x band at 10 Hz — are properties of the analysis cadence
+rather than of the releases alone. The paper now says so, and states the band
+for the 10 Hz cadence explicitly.
+
+### Reproduction path: source release to published number, for two releases
+
+The same script checks the freshly extracted 10 Hz series against the committed
+per-frame streams before it runs anything else. On all 23 Boreas and nuScenes
+sequences the timestamps, position, and published velocity agree exactly — max
+absolute difference 0.0, not merely within tolerance. The reproduction boundary
+described in the README therefore now applies to five releases rather than
+seven.
+
+### Superseded
+
+`scripts/decimation_threat_control.py` was written when those two source
+releases were believed unavailable: it pushes the aliasing threat further
+(10 → 5 → 3.33 Hz, every phase) instead of removing it. The direct control
+above supersedes it for that question. It is kept because the sweep is still
+informative, with one caveat now documented in the script and visible in its
+output: at `p=3` a setting with `W<3` leaves a single degree of freedom, so the
+probe interpolates rather than smooths, and those rows — identifiable by a
+smoothness ratio below one — say nothing about the release.
+
 ## v1.2-access
 
 This revision fixes a protocol violation in the Pit30M pipeline and, in the

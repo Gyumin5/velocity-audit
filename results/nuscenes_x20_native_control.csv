@@ -1,0 +1,17 @@
+check,key,value
+alignment,delta_pct,-16.16683278237638
+alignment,smooth_x,31.841178505863446
+alignment,W_native,25.0
+alignment,rate_hz,49.98250612285784
+latency,shift_-0.5s,-7.834051640533346
+latency,shift_-0.2s,-17.703324452998036
+latency,shift_-0.1s,-15.842721455071452
+latency,shift_+0.0s,-16.16683278237638
+latency,shift_+0.1s,-9.563304784053695
+latency,shift_+0.2s,-13.074966064708116
+latency,shift_+0.5s,-2.2142396564067246
+curvature,0e+00-1e-03,-13.883373593800341
+curvature,1e-03-5e-03,-15.8022278514512
+curvature,5e-03-2e-02,-18.553698483715063
+curvature,2e-02-1e-01,-19.11275738116953
+curvature,1e-01-1e+00,-1.5591440965896486
