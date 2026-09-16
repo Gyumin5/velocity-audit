@@ -2,8 +2,9 @@
 """Fig 1: cross-dataset curvature-binned RMSE reduction (cycle 25 redesign).
 
 Two side-by-side panels (no broken axis, no grouped bars):
-  Left  (wide): 6 driving datasets as line+marker. y-range close to data.
-  Right (narrow): Boreas only. Visually preserved as the 7th audit point.
+  Left  (wide): the 5 non-batch-joint releases as line+marker. y-range close to data.
+  Right (narrow): the 2 batch-joint releases, whose residual grows in every bin
+  and runs an order of magnitude off the left panel's scale.
 
 Plot-speaks-for-itself: lines show how the residual change behaves across curvature bins.
 The flat-or-decreasing shape in the left panel makes the "no high-curvature
@@ -68,6 +69,7 @@ def main():
     DATA = load_data(repo / "results" / "curvature_bins_all_datasets.csv")
     out = repo / "paper" / "figures" / "fig_curvature_bins.pdf"
     out_png = out.with_suffix(".png")
+    out.parent.mkdir(parents=True, exist_ok=True)
 
     # Drawn at the width it is placed at in the paper (\textwidth = 505pt =
     # 7.01 in), so the point sizes below are the point sizes the reader sees.
@@ -79,7 +81,7 @@ def main():
 
     xs = np.arange(len(BINS))
 
-    main_keys = ["HeLiPR", "Oxford", "nuScenes", "KITTI raw", "KITTI-360", "Pit30M"]
+    main_keys = ["HeLiPR", "Oxford", "nuScenes", "KITTI raw", "KITTI-360"]
     for ds in main_keys:
         ax_main.plot(xs, DATA[ds], label=ds, **STYLE[ds])
 
@@ -95,12 +97,15 @@ def main():
     ax_main.grid(True, axis="y", lw=0.3, ls=":", color="0.7")
     ax_main.legend(fontsize=8, loc="upper right", ncol=3, framealpha=1.0,
                    handlelength=2.2, columnspacing=0.9)
-    ax_main.set_title("6 audited datasets", fontsize=9, pad=2)
+    ax_main.set_title("5 audited datasets", fontsize=9, pad=2)
 
-    # Boreas only on the right panel
-    ax_bor.plot(xs, DATA["Boreas"], **STYLE["Boreas"])
+    # The two batch-joint releases share this panel: both move away from the
+    # published channel in every bin, at a scale the left panel cannot hold.
+    for ds in ["Boreas", "Pit30M"]:
+        ax_bor.plot(xs, DATA[ds], label=ds, **STYLE[ds])
     ax_bor.axhline(0, color="0.45", lw=0.6)
-    ax_bor.set_ylim(-130, 10)
+    ax_bor.set_ylim(-142, 14)
+    ax_bor.legend(fontsize=7, loc="upper right", framealpha=1.0, handlelength=1.8)
     ax_bor.set_xticks(xs)
     # ha="right" anchors each rotated label at its tick; without it the labels
     # centre on the tick and the last two run into each other.
@@ -108,8 +113,17 @@ def main():
                            rotation_mode="anchor")
     ax_bor.tick_params(axis="y", labelsize=8)
     ax_bor.grid(True, axis="y", lw=0.3, ls=":", color="0.7")
-    ax_bor.set_title("Boreas (batch)", fontsize=9, pad=2)
+    ax_bor.set_title("batch joint", fontsize=9, pad=2)
     ax_bor.set_xlabel(r"$|\kappa|$ bin", fontsize=8)
+
+    # A legend entry whose series is off its panel's y-range points at nothing.
+    # That happened once: Pit30M (-50 to -130%) sat in the left panel's legend
+    # while the axis ran -12 to 66.
+    for ax, keys in ((ax_main, main_keys), (ax_bor, ["Boreas", "Pit30M"])):
+        lo, hi = ax.get_ylim()
+        for ds in keys:
+            assert all(lo <= v <= hi for v in DATA[ds]), \
+                f"{ds} falls outside its panel's y-range {lo}..{hi}: {DATA[ds]}"
 
     plt.savefig(out, bbox_inches="tight", pad_inches=0.05)
     plt.savefig(out_png, dpi=160, bbox_inches="tight", pad_inches=0.05)

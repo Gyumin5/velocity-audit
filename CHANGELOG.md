@@ -1,5 +1,35 @@
 # Changelog
 
+## v1.6-access
+
+The checks the first review round asked for, and their generator, are here.
+`scripts/reviewer_response_checks.py` writes `results/reviewer_r1_checks/`: the
+probe's window span swept over 0.6, 1.0 and 1.4 s, the duration-matched
+Savitzky–Golay baseline on all seven releases, the latency sweep read from
+central differencing alone, and the coupling label against the release-level
+covariates that could carry the same ordering. `scripts/antialias_control.py`
+and `results/antialias_control.csv` are the anti-aliasing control on the two
+releases published above the analysis cadence. The revised paper cites all five
+of those files by path; until this tag the paths resolved to nothing here.
+
+`scripts/verify_references.py` and the bibliography it checks, `paper/ref.bib`,
+are here too. It compares every entry against CrossRef and the arXiv API on
+year, venue, first author, volume and page range, and reports any journal entry
+that carries no volume or no page range.
+
+Figure 2 moves Pit30M into the batch-joint panel. It had been in the left
+panel's legend while its values, −50 to −130%, sat outside that panel's −12 to
+66 range, so the legend named a curve the reader could not see. The script now
+asserts that every series it labels lies inside its panel's range before it
+writes anything.
+
+A fresh clone now regenerates all three of the paper's figures with no external
+data. `make_regime_figure.py` wrote to an absolute path on our own machine;
+both it and `make_curvature_fig.py` resolve the output from the repository root
+and create the directory. `verify_kaist_artifact.py` raised `AttributeError`
+before it reached its comparison — a path expression had lost a pair of
+parentheses — and runs again.
+
 ## v1.5-access
 
 Documentation only; no code, data, or result changed.

@@ -91,7 +91,8 @@ def _label_right_of_bar(ax, value, y, text, xlim, font=8.0):
 
 
 def main():
-    out = Path("/home/gmoh/av-ros/test/velocity/paper/figures/fig_regime_overview.pdf")
+    repo = Path(__file__).resolve().parents[1]
+    out = repo / "paper" / "figures" / "fig_regime_overview.pdf"
     out.parent.mkdir(parents=True, exist_ok=True)
 
     # Wide two-column figure: more horizontal room → labels outside bars stay readable

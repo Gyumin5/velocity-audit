@@ -158,7 +158,7 @@ def main():
     print(f"central-diff velocity 2nd-diff RMS: {np.sqrt(np.mean(jerk**2)):.4f}")
     print(f"central-diff velocity stdev      : {np.std(v_central):.3f}")
     # Compare with HeLiPR pose if available
-    helipr_paths = list(REPO_ROOT / "results" / "helipr".glob("per_frame_*.parquet"))
+    helipr_paths = list((REPO_ROOT / "results" / "helipr").glob("per_frame_*.parquet"))
     if helipr_paths:
         df = pd.read_parquet(helipr_paths[0])
         if "v_central" in df.columns:

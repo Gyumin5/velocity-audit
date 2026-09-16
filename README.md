@@ -61,6 +61,13 @@ The generators for the paper's main tables are:
 | `native_window_control.py` | `boreas_native_control.csv`, `nuscenes_x20_native_control.csv` | the same control on Boreas and nuScenes, plus the source-to-stream reproduction check |
 | `per_frame_manifest.py` | `per_frame_manifest.csv` | content digests of every stream the analysis consumed |
 | `verify_crossds_table.py` | `crossds_verify.csv` | an independent recomputation of all seven rows |
+| `antialias_control.py` | `antialias_control.csv` | the anti-aliasing control on the two releases published above the analysis cadence |
+| `reviewer_response_checks.py` | `reviewer_r1_checks/*.csv` | the window-span sweep, the duration-matched Savitzky–Golay baseline, the latency sweep read from central differencing alone, and the label-versus-covariate rank comparison |
+
+`scripts/verify_references.py` is the one script here that reads nothing under
+`results/`. It checks every entry of the paper's bibliography, committed as
+`paper/ref.bib`, against CrossRef and the arXiv API — year, venue, first author,
+volume and page range — and reports what disagrees. Run it with no arguments.
 | `make_two_stage_figure.py` | `fig_two_stage.pdf` | Figure 1, the two-stage schematic |
 | `make_curvature_fig.py` | `fig_curvature_bins.pdf` | Figure 2, the curvature-binned response |
 | `make_regime_figure.py` | `fig_regime_overview.pdf` | Figure 3, the regime overview |
@@ -120,6 +127,11 @@ uninterpretable.
 - `av2/`, `durlar/`, `ncd/` — the three pose-only external checks reported as
   supplementary evidence for the smoothness band.
 - `kaist_cu/` — the non-inertial reference-physics boundary case.
+- `reviewer_r1_checks/` — the four checks the first review round asked for: the
+  probe's window span swept over 0.6, 1.0 and 1.4 s on all seven releases, the
+  duration-matched Savitzky–Golay baseline, the latency sweep read from central
+  differencing alone, and the coupling label against the release-level
+  covariates that could carry the same ordering.
 - `dr/` — dead-reckoning drift, the downstream-consequence check.
 - `oxford/`, `oxford_x11/`, `nuscenes_x20/`, `boreas/`, `kitti360/`, `pit30m/`
   — per-release summaries. The `_x11` and `_x20` suffixes mark the runs at those

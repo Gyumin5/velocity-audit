@@ -1,0 +1,13 @@
+subset,n,predictor,spearman_rho_with_delta
+all seven,7,coupling_rank,0.944911182523068
+all seven,7,M4_c,-0.5
+all seven,7,M3_c,-0.8571428571428571
+drop KITTI raw,6,coupling_rank,0.9561828874675149
+drop KITTI raw,6,M4_c,-0.5428571428571428
+drop KITTI raw,6,M3_c,-0.7714285714285715
+drop KITTI-360,6,coupling_rank,0.9561828874675149
+drop KITTI-360,6,M4_c,-0.6
+drop KITTI-360,6,M3_c,-0.8857142857142857
+drop both KITTI,5,coupling_rank,0.9486832980505138
+drop both KITTI,5,M4_c,-0.6
+drop both KITTI,5,M3_c,-0.8
