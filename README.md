@@ -62,6 +62,7 @@ The generators for the paper's main tables are:
 | `per_frame_manifest.py` | `per_frame_manifest.csv` | content digests of every stream the analysis consumed |
 | `verify_crossds_table.py` | `crossds_verify.csv` | an independent recomputation of all seven rows |
 | `antialias_control.py` | `antialias_control.csv` | the anti-aliasing control on the two releases published above the analysis cadence |
+| `lowspeed_exclusion_control.py` | `lowspeed_exclusion_control.csv` | the low-speed exclusion control behind L4: `M_4` and `Delta` recomputed with every sample below 0.3 m/s removed |
 | `reviewer_response_checks.py` | `reviewer_r1_checks/*.csv` | the window-span sweep, the duration-matched Savitzky–Golay baseline, the latency sweep read from central differencing alone, and the label-versus-covariate rank comparison |
 
 `scripts/verify_references.py` is the one script here that reads nothing under

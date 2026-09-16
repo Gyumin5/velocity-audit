@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.7-access
+
+`scripts/lowspeed_exclusion_control.py` and `results/lowspeed_exclusion_control.csv`
+answer a question the paper had been settling by argument. A two-component speed
+norm is positively biased near zero, and the bias scales with whatever noise the
+operator leaves, so an operator that leaves less noise looks better on a stopped
+segment for a reason unrelated to the release. `M_2` was excluded from the
+coupling reading for that reason, but `M_4` is computed over the whole evaluation
+interval, so those samples were still in it. The control recomputes `M_4` and
+`Delta` with every sample below the same 0.3 m/s threshold removed, under the
+conventions of `build_crossds_tables.py`. Removing between 0.3% and 32.1% of the
+samples, depending on the release, moves `Delta` by at most 2.9 percentage points
+on any of the seven, leaves every release on the same side of the reporting
+margin, and leaves the between-regime ordering intact.
+
 ## v1.6-access
 
 The checks the first review round asked for, and their generator, are here.
