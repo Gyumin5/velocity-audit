@@ -31,7 +31,7 @@ rather than an argument.
     rest on one knob setting. Both pose channels and the published velocity go
     through the same filter, so the two streams are compared over the same band.
     filtfilt pads by 3*max(len(a), len(b)) samples at each end; on top of that we
-    drop one probe window (10 samples at 10 Hz) from each end of both routes, so
+    drop ten samples (one window span at 10 Hz) from each end of both routes, so
     the comparison never reads a filter edge transient, and the trim is identical
     on the two routes.
 
@@ -67,7 +67,7 @@ ANALYSIS_NYQUIST = ANALYSIS_HZ / 2
 CUTOFFS_HZ = (4.0, 2.5)
 FILTER_ORDER = 4
 W = 5           # 1.0 s at the 10 Hz analysis cadence
-EDGE_TRIM = 10  # one probe window dropped from each end, both routes alike
+EDGE_TRIM = 10  # one window span dropped from each end, both routes alike
 SHIFTS = (-0.5, -0.2, -0.1, 0.1, 0.2, 0.5)
 
 

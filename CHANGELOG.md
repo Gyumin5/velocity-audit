@@ -1,5 +1,29 @@
 # Changelog
 
+## v1.8-access
+
+The bibliography and the reference checker. Four entries in `paper/ref.bib` named
+the wrong people or the wrong paper: `schmidt2022sg` was a different author pair
+and a different article, `sommer2020bsplines` listed a co-author who is not on the
+paper and dropped two who are, `nikolic2016imu` had the right family name with the
+wrong given name, and `anderson2015steam` carried no page range. All four now
+match the registered record.
+
+`scripts/verify_references.py` is what should have caught them and did not. Its
+docstring claimed it compared authors while the code compared only the year and
+the container title; it now compares the whole author list in order, given names
+included, at the resolution the two sides spell them (an initial agrees with the
+name it abbreviates). One registered record is itself wrong about a given name --
+CrossRef stores the fourth author of the Pit30M paper as "loan Andrei" with a
+lowercase L -- so that one difference is listed in the script with its reason
+rather than corrected into the bibliography.
+
+`scripts/antialias_control.py` had a comment calling the probe window "ten
+samples"; a W=5 window is eleven. The trim itself was always ten samples, which is
+one window span, and the comment now says that. `scripts/decimation_threat_control.py`
+initialises its span variable to NaN rather than None, so a release with no
+sequences reports rather than raises.
+
 ## v1.7-access
 
 `scripts/lowspeed_exclusion_control.py` and `results/lowspeed_exclusion_control.csv`

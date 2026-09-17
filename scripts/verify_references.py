@@ -4,7 +4,7 @@
 Reviewer 3 of the IEEE Access first round listed eight entries with a wrong
 year, a wrong journal, a format problem, or an author list that does not match
 the arXiv record.  A DOI that resolves is not enough: what has to agree is the
-year, the container title, and the first author.  This checks those three.
+year, the container title, and the author list.  This checks those three.
 
 Entries with a doi field are looked up by DOI.  Entries with an arXiv URL are
 looked up through the arXiv API.  Everything else is searched by title and the
@@ -21,12 +21,96 @@ import sys
 import time
 import urllib.parse
 import urllib.request
+import unicodedata
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 BIB = REPO / "paper" / "ref.bib"
 UA = "velocity-audit-refcheck/1.0 (mailto:ogm3614@snu.ac.kr)"
+
+
+# The NeurIPS Datasets and Benchmarks Track prints no page numbers, so this
+# entry has no page range to carry. Every other conference entry does.
+NEURIPS_UNPAGINATED = {"wilson2023argoverse2"}
+
+def norm_name(name: str) -> str:
+    """Compare names on letters alone: the BibTeX source spells accents as
+    macros (K{\\"u}mmerle) and CrossRef spells them as characters."""
+    name = unicodedata.normalize("NFKD", name)
+    return re.sub(r"[^a-z]", "", name.lower())
+
+
+# One registered record is itself wrong about a given name, and our entry is
+# right, so the difference is recorded here rather than "corrected" into the
+# bibliography. Keyed by (bib key, normalised family name).
+RECORD_GIVEN_DEFECTS = {
+    ("martinez2020pit30m", "barsan"):
+        "CrossRef stores 'loan Andrei' with a lowercase L; the author is Ioan Andrei Barsan",
+}
+
+
+def norm_given(name: str) -> str:
+    """Given names normalised to space-separated words. Unlike norm_name this keeps
+    the word boundaries, because "Ioan A." and "Marcel J. E." collapse into single
+    tokens without them and then read as disagreements with the spelled-out record."""
+    name = unicodedata.normalize("NFKD", name)
+    words = [re.sub(r"[^a-z]", "", w.lower()) for w in re.split(r"[\s.\-]+", name)]
+    return " ".join(w for w in words if w)
+
+
+def people(author_field: str) -> list:
+    """Every author in the entry as (family, given), in order.
+
+    A resolving DOI says nothing about the author list, and reviewer 3 asked for
+    the list to be right rather than only its first name. The given name is kept
+    because the records carry it: nikolic2016imu named the right family with the
+    wrong given name (Andreas for Amir) and a family-only check passed it."""
+    out = []
+    for part in re.split(r"\s+and\s+", author_field.strip()):
+        part = part.replace("{", "").replace("}", "").strip()
+        if not part:
+            continue
+        if "," in part:
+            fam, _, given = part.partition(",")
+        else:
+            words = part.split()
+            fam, given = words[-1], " ".join(words[:-1])
+        out.append((norm_name(fam), norm_given(given)))
+    return out
+
+
+def families(author_field: str) -> list:
+    return [f for f, _ in people(author_field)]
+
+
+def given_agrees(ours: str, theirs: str) -> bool:
+    """An initial agrees with the name it abbreviates; two spelled-out names do not
+    agree unless they match. Either side may be initials, so compare at the shorter
+    resolution rather than calling every abbreviation a disagreement."""
+    if not ours or not theirs:
+        return True
+    a, b = ours.split(), theirs.split()
+    if not a or not b:
+        return True
+    for x, y in zip(a, b):
+        if len(x) == 1 or len(y) == 1:
+            if x[0] != y[0]:
+                return False
+        elif x != y:
+            return False
+    return True
+
+
+def first_family(author_field: str) -> str:
+    """Family name of the first author, from either BibTeX spelling.
+
+    A multi-word family name (Le Gentil) survives only when the entry writes
+    "Family, Given", so the comma form decides where the family name ends."""
+    first = re.split(r"\s+and\s+", author_field.strip())[0]
+    first = first.replace("{", "").replace("}", "").strip()
+    name = first.split(",")[0] if "," in first else first.split()[-1]
+    return norm_name(name)
 
 
 def get(url: str, tries: int = 3) -> str:
@@ -156,6 +240,11 @@ def main() -> int:
                 row["remote_title"] = a["title"]
                 row["remote_authors"] = a["authors"]
                 row["remote_year"] = int(a["published"][:4])
+                row["compare"] = {
+                    "year": (e.get("year", ""), a["published"][:4]),
+                    "title": (e.get("title", ""), a["title"]),
+                    "authors": (e.get("author", ""), "; ".join(a["authors"])),
+                }
                 if clean(a["title"]) != clean(e.get("title", "")):
                     row["problems"].append(f"title differs from arXiv: {a['title']!r}")
                 if a["authors"] and first_surname(e.get("author", "")) != clean(a["authors"][0].split()[-1]):
@@ -173,12 +262,47 @@ def main() -> int:
                 y = cr_year(msg)
                 rt = (msg.get("title") or [""])[0]
                 row.update({"remote_title": rt, "remote_venue": ct, "remote_year": y})
+                # Both sides of every compared field are kept so that the
+                # comparison can be printed side by side for a human to read,
+                # not only the fields that disagreed.
+                row["compare"] = {
+                    "year": (e.get("year", ""), str(y or "")),
+                    "venue": (venue, ct),
+                    "title": (e.get("title", ""), rt),
+                    "authors": (e.get("author", ""),
+                                "; ".join(f"{a.get('given','')} {a.get('family','')}".strip()
+                                          for a in (msg.get("author") or []))),
+                    "volume": (e.get("volume", ""), str(msg.get("volume") or "")),
+                    "pages": (e.get("pages", ""), str(msg.get("page") or "")),
+                }
                 if y and bib_year and y != bib_year:
                     row["problems"].append(f"year {bib_year} vs CrossRef {y}")
                 if ct and clean(ct) != clean(venue) and clean(venue) not in clean(ct):
                     row["problems"].append(f"venue {venue!r} vs CrossRef {ct!r}")
                 if rt and clean(rt) != clean(e.get("title", "")):
                     row["problems"].append(f"title differs: CrossRef {rt!r}")
+                # The author list is what reviewer 3 flagged on the arXiv entry,
+                # and an entry can carry a resolving DOI while naming someone who
+                # is not on the paper or dropping co-authors, so the whole list is
+                # compared, in order.
+                ra = [(norm_name(a.get("family", "")), norm_given(a.get("given", "")))
+                      for a in (msg.get("author") or []) if a.get("family")]
+                if ra and e.get("author"):
+                    ours, theirs = people(e["author"]), ra
+                    # "and others" means the tail is deliberately elided, so only
+                    # the names the entry does print have to agree.
+                    if ours and ours[-1][0] == "others":
+                        ours, theirs = ours[:-1], theirs[:len(ours) - 1]
+                    shown = [f"{g} {f}".strip() for f, g in ra]
+                    if [f for f, _ in ours] != [f for f, _ in theirs]:
+                        row["problems"].append(f"authors {e['author']!r} vs CrossRef {shown}")
+                    else:
+                        for (of, og), (tf, tg) in zip(ours, theirs):
+                            if (e["key"], of) in RECORD_GIVEN_DEFECTS:
+                                continue
+                            if not given_agrees(og, tg):
+                                row["problems"].append(
+                                    f"given name {og!r} for {of!r} vs CrossRef {tg!r}")
                 # Reviewer 3 asked for complete records, so the volume and page
                 # range have to agree with the registered ones, not just exist.
                 cv, cp = str(msg.get("volume") or ""), str(msg.get("page") or "")
@@ -204,6 +328,13 @@ def main() -> int:
             for f in ("volume", "pages"):
                 if not e.get(f):
                     row["problems"].append(f"incomplete: no {f}")
+
+        # A conference paper printed without a page range is the same case.
+        # NEURIPS_UNPAGINATED lists the proceedings that carry no page numbers
+        # at all, so that a missing range there is not reported as a defect.
+        if e["type"] == "inproceedings" and not e.get("pages"):
+            if e["key"] not in NEURIPS_UNPAGINATED:
+                row["problems"].append("incomplete: no pages")
 
         if row["problems"]:
             bad += 1

@@ -60,7 +60,7 @@ def main() -> None:
         for stride, W in SETTINGS:
             for phase in range(stride):
                 cs, fs, m3c, m3f, lat = [], [], [], [], {s: [] for s in SHIFTS}
-                span = None
+                span = float("nan")
                 for d in raw:
                     t = d["t"].to_numpy()[phase::stride]
                     x = d["x"].to_numpy()[phase::stride]
