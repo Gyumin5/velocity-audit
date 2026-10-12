@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.15-access
+
+One result file and one script added.
+
+`make_tuned_spline_table.py` writes `results/helipr/tuned_spline_full_interval.csv`.
+Every operator in Table 2 of the paper has a column in the per-frame streams the
+analysis consumes, except the tuned smoothing spline: its knots are chosen per
+sequence, so it is fitted at scoring time and leaves no stored column. That made
+its row the one row a reader could not check against the published streams. The
+script refits it on the same full stored interval as the other rows and writes
+the four metrics per sequence, so the row's medians (M1 1.5e-05, M2 0.050,
+M3_sm 0.106, M4 0.0739) and the 0.026-0.194 m/s spread the text quotes can both
+be read off the file.
+
 ## v1.14-access
 
 One result file and one script added.
