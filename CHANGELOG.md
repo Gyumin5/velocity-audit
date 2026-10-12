@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.14-access
+
+One result file and one script added.
+
+`nuscenes_vel_components.py` writes `nuscenes_vel_components.csv`. Table 7 of the
+paper recomputes the two OXTS releases against a matched horizontal speed and
+does not recompute nuScenes, and the reason is a property of the published
+records rather than a choice: across all 979 CAN pose files (952,103 records)
+the velocity's lateral and vertical components and the orientation quaternion's
+x and y terms are zero, so the record carries neither a lateral channel nor a
+pitch angle. The script counts both over the whole set, so the statement rests
+on the records and not on a sample of them.
+
+
 ## v1.10-access
 
 Three result files and two scripts added, and the shifted comparison re-scored on

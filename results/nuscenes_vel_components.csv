@@ -1,0 +1,2 @@
+n_scenes,n_rows,vy_nonzero,vz_nonzero,max_abs_vy,max_abs_vz,quat_x_nonzero,quat_y_nonzero,max_abs_quat_x,max_abs_quat_y
+979,952103,0,0,0.0,0.0,0,0,0.0,0.0
