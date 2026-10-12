@@ -18,8 +18,11 @@ B) The latency sweep read from central differencing alone.
    the central-only column, so this recomputes it as a ratio against the
    unshifted value and records the shape per release.
 
-C) Whether the documentation-assigned coupling label orders Delta better than
-   release-level covariates that are already in the multi-metric table.
+C) Whether release-level covariates that are already in the multi-metric table
+   order Delta.  The coupling axis this check once ranked against was withdrawn
+   in revision 2; the labels here are the provenance labels the manuscript
+   reports, and they take two values on this corpus, so they are carried as
+   metadata and not ranked.
 
 Writes results/reviewer_r1_checks/.
 """
@@ -37,15 +40,16 @@ from velref.core.trajectory import Pose2D
 from velref.methods.baselines import savgol_deriv, smoothing_spline_deriv
 from velref.methods.family_a import family_a_pointwise
 
-# display name -> (results subdirectory, published-velocity column, coupling label)
+# display name -> (results subdirectory, published-velocity column, provenance
+# label as Table 2 of the manuscript reports it)
 DATASETS = [
-    ("HeLiPR",    "helipr",       "v_ins",  "separated"),
-    ("Oxford",    "oxford_x11",   "v_ins",  "alg. separated"),
-    ("nuScenes",  "nuscenes_x20", "v_can",  "weak/online"),
-    ("KITTI",     "kitti",        "v_oxts", "weak/online"),
-    ("KITTI-360", "kitti360",     "v_ref",  "weak/online"),
-    ("Boreas",    "boreas",       "v_ref",  "batch joint"),
-    ("Pit30M",    "pit30m_10hz",  "v_ref",  "batch joint"),
+    ("HeLiPR",    "helipr",       "v_ins",  "joint"),
+    ("Oxford",    "oxford_x11",   "v_ins",  "undetermined"),
+    ("nuScenes",  "nuscenes_x20", "v_can",  "undetermined"),
+    ("KITTI",     "kitti",        "v_oxts", "joint"),
+    ("KITTI-360", "kitti360",     "v_ref",  "joint"),
+    ("Boreas",    "boreas",       "v_ref",  "joint"),
+    ("Pit30M",    "pit30m_10hz",  "v_ref",  "undetermined"),
 ]
 
 # The paper's interior rule: drop the first and last max(10, n/50) samples on
@@ -98,7 +102,7 @@ def check_a() -> pd.DataFrame:
                 per_seq[k].append(rmse(v[sl], ref[sl]))
         med = {k: float(np.median(v)) for k, v in per_seq.items()}
         rows.append({
-            "dataset": name, "N": len(files), "coupling": label,
+            "dataset": name, "N": len(files), "provenance": label,
             "dt_cv_median": float(np.median(dt_cv)),
             "M4_central": med["central"], "M4_sg_w7p3": med["sg_w7p3"],
             "M4_sg_w11p3": med["sg_w11p3"], "M4_spline": med["spline"],
@@ -141,8 +145,6 @@ def check_b() -> pd.DataFrame:
 def check_c(a: pd.DataFrame) -> pd.DataFrame:
     multi = pd.read_csv(REPO / "results" / "multimetric_recomputed.csv")
     m = a.merge(multi[["dataset", "M3_c", "M4_c"]], on="dataset")
-    order = {"separated": 0, "alg. separated": 0, "weak/online": 1, "batch joint": 2}
-    m["coupling_rank"] = m["coupling"].map(order)
     m = m.reset_index(drop=True)
     # Reviewer 1 notes that KITTI raw and KITTI-360 share the OXTS platform and
     # export path, so the online band is one sensing chain seen twice. Each
@@ -157,7 +159,7 @@ def check_c(a: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for subset, mm in subsets.items():
         line = []
-        for col in ("coupling_rank", "M4_c", "M3_c"):
+        for col in ("M4_c", "M3_c"):
             rho = mm[[col, "delta_fa_pct"]].corr(method="spearman").iloc[0, 1]
             rows.append({"subset": subset, "n": len(mm), "predictor": col,
                          "spearman_rho_with_delta": rho})
@@ -177,17 +179,22 @@ SHIFTS = (-0.5, -0.2, -0.1, 0.1, 0.2, 0.5)
 WINDOWS = {3: 0.6, 5: 1.0, 7: 1.4}  # W -> span in seconds at the 10 Hz analysis cadence
 
 
-def algorithm_output(coupling: str, delta_frac: float, sign_survives: bool) -> str:
-    """Algorithm 1's returned interpretation, evaluated as written."""
-    if coupling == "batch joint":
-        return "no independent comparison; report delta and its latency fragility"
-    if coupling == "weak/online":
-        return ("consistent with shared filter state" if abs(delta_frac) < TAU
-                else "residual response departs from the setting's expectation")
-    if coupling in ("separated", "alg. separated"):
-        if delta_frac < 0 and sign_survives:
-            return "response not attributable to a shared clock alone"
-        return "inconclusive"
+def algorithm_output(provenance: str, delta_frac: float, sign_survives: bool) -> str:
+    """Algorithm 1's returned interpretation, evaluated as written.
+
+    No branch reads delta or the latency sweep; both arguments are kept so the
+    caller can record them beside the branch that was taken.
+    """
+    if provenance == "joint":
+        return ("one estimator produced both streams, so M4 is its internal "
+                "consistency and bounds no error; report delta, never as agreement")
+    if provenance == "undetermined":
+        return ("the production path of at least one audited channel is "
+                "undocumented; report delta and name the gap; do not read the "
+                "silence as independence")
+    if provenance == "separate":
+        return ("two documented independent productions; delta compares two "
+                "estimates of the same quantity")
     return "unclassified"
 
 
@@ -228,7 +235,7 @@ def check_d() -> pd.DataFrame:
             if W == 5:
                 base = delta
             rows.append({
-                "dataset": name, "coupling": label, "W": W, "span_s": span,
+                "dataset": name, "provenance": label, "W": W, "span_s": span,
                 "M4_central": mc, "M4_fa": mf, "delta_pct": delta * 100,
                 "clears_margin": abs(delta) >= TAU,
                 "latency_sign_survives": survives,
@@ -259,7 +266,7 @@ def main() -> None:
     print("\n=== B: latency sweep read from central differencing alone ===")
     b = check_b()
     b.to_csv(out_dir / "latency_central_only.csv", index=False)
-    print("\n=== C: does the coupling label order delta better than covariates? ===")
+    print("\n=== C: do release-level covariates order delta? ===")
     c = check_c(a)
     c.to_csv(out_dir / "label_vs_covariates.csv", index=False)
     print("\n=== D: window-duration sensitivity on all seven releases ===")

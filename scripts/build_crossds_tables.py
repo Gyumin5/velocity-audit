@@ -24,15 +24,16 @@ import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
-# display name -> (results subdirectory, published-velocity column, regime label)
+# display name -> (results subdirectory, published-velocity column, provenance
+# label as Table 2 of the manuscript reports it)
 DATASETS = [
-    ("HeLiPR",    "helipr",       "v_ins",  "separated"),
-    ("Oxford",    "oxford_x11",   "v_ins",  "alg.\\ sep."),
-    ("nuScenes",  "nuscenes_x20", "v_can",  "weak.\\ coup."),
-    ("KITTI",     "kitti",        "v_oxts", "online"),
-    ("KITTI-360", "kitti360",     "v_ref",  "online"),
-    ("Boreas",    "boreas",       "v_ref",  "batch joint"),
-    ("Pit30M",    "pit30m_10hz",  "v_ref",  "batch joint"),
+    ("HeLiPR",    "helipr",       "v_ins",  "joint"),
+    ("Oxford",    "oxford_x11",   "v_ins",  "undetermined"),
+    ("nuScenes",  "nuscenes_x20", "v_can",  "undetermined"),
+    ("KITTI",     "kitti",        "v_oxts", "joint"),
+    ("KITTI-360", "kitti360",     "v_ref",  "joint"),
+    ("Boreas",    "boreas",       "v_ref",  "joint"),
+    ("Pit30M",    "pit30m_10hz",  "v_ref",  "undetermined"),
 ]
 
 SHIFTS = (-0.5, -0.2, -0.1, 0.0, 0.1, 0.2, 0.5)
@@ -82,7 +83,7 @@ def main() -> None:
     args = ap.parse_args()
 
     cross, multi, lat = [], [], []
-    for name, subdir, ref_col, regime in DATASETS:
+    for name, subdir, ref_col, provenance in DATASETS:
         seqs = list(load(subdir, ref_col))
         if not seqs:
             print(f"{name}: no per-frame streams under results/{subdir}")
@@ -94,7 +95,7 @@ def main() -> None:
         med_c, med_f = float(np.median(m4c)), float(np.median(m4f))
         cross.append({"dataset": name, "N": len(seqs), "central": med_c,
                       "fa_W5": med_f, "delta_pct": (med_f / med_c - 1) * 100,
-                      "ci_lo": lo, "ci_hi": hi, "regime": regime})
+                      "ci_lo": lo, "ci_hi": hi, "provenance": provenance})
 
         # A sequence with no samples below the low-speed threshold contributes no
         # M_2 value; those are skipped rather than propagated as NaN.
