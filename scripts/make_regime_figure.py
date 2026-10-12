@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Regime overview figure (horizontal-bar, no legend overlap).
+"""Dataset overview figure (horizontal-bar, no legend overlap).
 
 Layout rules (per ai-debate consensus):
   - generous left padding so dataset names never touch bars
   - value labels INSIDE the bar (right-aligned for positive, left-aligned for negative)
   - short bars get the label outside the bar tip (clamped within xlim)
   - observed-range band label sits at the top of panel (b), not in the bar grid
-  - regime meaning is documented in the caption, not in an inline legend
+  - the provenance label is documented in the caption, not in an inline legend
 """
 from __future__ import annotations
 from pathlib import Path
@@ -29,10 +29,15 @@ import pandas as pd
 
 RESULTS = Path(__file__).resolve().parents[1] / "results"
 
-REGIME_OF = {
-    "HeLiPR": "separated", "Oxford": "alg. separated",
-    "nuScenes": "weak", "KITTI": "online", "KITTI-360": "online",
-    "Boreas": "batch", "Pit30M": "batch",
+# Documentary provenance label of Table 2: does the release document one
+# estimator producing both the pose and the speed we audit?  No release in the
+# corpus is documented as producing them independently, so the only values here
+# are "joint" and "undetermined"; KAIST CU is the one different-sensor case and
+# is shown apart as a reference-physics boundary.
+PROVENANCE_OF = {
+    "HeLiPR": "joint", "Oxford": "undetermined",
+    "nuScenes": "undetermined", "KITTI": "joint", "KITTI-360": "joint",
+    "Boreas": "joint", "Pit30M": "joint",
 }
 DISPLAY_NAME = {"KITTI": "KITTI raw"}
 
@@ -46,7 +51,7 @@ def _build_datasets():
     cross = pd.read_csv(RESULTS / "crossds_recomputed.csv").set_index("dataset")
     multi = pd.read_csv(RESULTS / "multimetric_recomputed.csv").set_index("dataset")
     rows = []
-    for name, regime in REGIME_OF.items():
+    for name, regime in PROVENANCE_OF.items():
         rows.append((DISPLAY_NAME.get(name, name), regime,
                      float(cross.loc[name, "delta_pct"]),
                      float(multi.loc[name, "M3_c"] / multi.loc[name, "M3_f"])))
@@ -66,11 +71,8 @@ def _build_datasets():
 DATASETS, SMOOTH_BAND = _build_datasets()
 
 REGIME_COLOR = {
-    "separated":      "#2a8a3a",
-    "alg. separated": "#3aa050",
-    "weak":           "#4c78c8",
-    "online":         "#7a8acb",
-    "batch":          "#c84a4a",
+    "joint":          "#4c78c8",
+    "undetermined":   "#7a8acb",
     "wheel-encoder":  "#d09020",
     "pose-only":      "#8a8a8a",
 }
@@ -122,23 +124,12 @@ def main():
         lbl = f"{round(delta):+.0f}%" if round(delta) != 0 else "0%"
         _label_right_of_bar(axA, delta, i, lbl, xlim_a, font=9.0)
     axA.axvline(0, color="0.15", lw=1.2, zorder=3)
-    # Coupling-band separator lines + direct group labels (left of bars)
-    # Group boundaries (after each contiguous regime cluster in a_data):
-    #   0-1: separated/alg.sep    (HeLiPR, Oxford)
-    #   2-4: weak/online          (nuScenes, KITTI, KITTI-360)
-    #   5-6: batch joint          (Boreas, Pit30M)
-    #   7:   wheel-encoder        (KAIST CU)
-    for ysep in (1.5, 4.5, 6.5):
-        axA.axhline(ysep, color="0.4", lw=0.7, ls=(0, (3, 2)), zorder=1)
-    group_labels = [
-        (0.5,  "sep."),
-        (3.0,  "online"),
-        (5.5,  "batch"),
-        (7.0,  "wheel"),
-    ]
-    for ypos, txt in group_labels:
-        axA.text(-78, ypos, txt, fontsize=7.5, color="0.25",
-                 ha="left", va="center", style="italic", zorder=4)
+    # One separator only: the seven audited releases above, the wheel-encoder
+    # reference-physics boundary case below.  The releases are not grouped,
+    # because the provenance label does not order this panel.
+    axA.axhline(6.5, color="0.4", lw=0.7, ls=(0, (3, 2)), zorder=1)
+    axA.text(-78, 7.0, "wheel", fontsize=7.5, color="0.25",
+             ha="left", va="center", style="italic", zorder=4)
     axA.set_yticks(y_a)
     axA.set_yticklabels([d[0] for d in a_data], fontsize=9.0)
     axA.invert_yaxis()

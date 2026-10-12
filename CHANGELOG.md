@@ -1,5 +1,66 @@
 # Changelog
 
+## v1.9-access
+
+The second review round. Four scripts and six result files, and one reading of an
+earlier experiment withdrawn.
+
+`scripts/shift_quadrature_control.py` settles what the time-shift sweep shows.
+Shifting the published velocity against the pose injects a common error into both
+residuals, and two residuals that differ at zero shift are pulled together by it
+whatever their origin, so the collapse of the relative difference toward zero
+carries no information about how the release was produced. The script predicts
+each shifted residual from the zero-shift residual and the injected error in
+quadrature and compares that prediction against the observed value:
+`shift_quadrature_control.csv` covers all seven releases at every shift, and the
+prediction stays within 5.0 percentage points of the observed relative difference
+on six of them, 17.2 on nuScenes, whose sequences are 20 s long so a 0.5 s shift
+removes a larger share of each. `shift_synthetic_control.csv` makes the same
+point where the answer is known by construction: a stream whose published
+velocity was never smoothed with its pose shows the same collapse. The paper's
+reading of that sweep is withdrawn, and the sweep is now reported as a
+sensitivity check with the absolute residuals alongside it.
+
+`scripts/matched_horizontal_speed.py` answers the objection that the probe
+produces a horizontal ground speed while KITTI raw and KITTI-360 were audited
+against the OXTS forward component `vf`. Those are the only two releases in the
+corpus whose reference is not already a horizontal speed. The OXTS record also
+publishes north and east components, and `dataformat.txt` defines both `vf` and
+`vl` as parallel to the earth surface, so `sqrt(vn^2+ve^2)` is the matched
+quantity; the audited frames, operators, and setting are held fixed and only the
+comparison target changes. On KITTI-360 the median residual falls from 0.228 to
+0.068 m/s, and the breakdown in `matched_horizontal_speed.csv` locates the cause
+in reverse travel rather than lateral slip: 1.52% of frames carry a negative `vf`,
+where a signed component and an unsigned speed differ by twice the speed, while
+on cruising frames the two definitions agree to within 0.3 to 2.7 mm/s. On KITTI
+raw, which has no reverse frames, the median residual barely moves (0.136 to
+0.134 m/s) and the relative difference is unchanged at -2.5%; there the record is
+internally inconsistent instead, with `sqrt(vf^2+vl^2)` and `sqrt(vn^2+ve^2)`
+disagreeing by 1 to 39 mm/s depending on the sequence, against under 1 mm/s on
+KITTI-360. nuScenes is not recomputable: its
+CAN pose record is planar across all 979 files, with no lateral or vertical
+component and no pitch, so no matched reference exists in it.
+
+`scripts/detail_checks_r2_6.py` covers three smaller points.
+`chord_arc_bias.csv` bounds the chord-versus-arc sampling bias, which is at most
+6.1% of the central-differencing residual in RMS on any release and at most 0.58%
+of the speed itself. `m1_precision.csv` reports the synthetic-stage variance
+ratio with its range over the sweep rather than as a single figure.
+`shift_valid_interval.csv` records that the shifted comparison retains at least
+95.7% of frames at every shift and that both operators are evaluated on the same
+frame mask throughout.
+
+`scripts/fetch_remote_zip_subset.py` pulls a named subset of files out of a
+remote zip over HTTP range requests, including zip64 archives, which is how the
+OXTS text records were obtained from releases distributed as single
+multi-gigabyte archives.
+
+`scripts/make_regime_figure.py` now groups the releases by documented
+provenance — jointly produced, or undetermined — rather than by the withdrawn
+coupling label. No release in the corpus documents a separately produced velocity
+channel, so there is no contrast to draw between the two conditions, and the
+README says so.
+
 ## v1.8-access
 
 The bibliography and the reference checker. Four entries in `paper/ref.bib` named

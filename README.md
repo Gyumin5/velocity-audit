@@ -10,7 +10,7 @@ The audit runs in two stages, and the separation between them is the point.
 
 **Stage 1 — instrument characterization (truth known).** A fixed local least-squares polynomial probe is characterized without consulting any published velocity. Two sources fix its behavior: a closed-form noise-propagation expression whose variance ratio depends only on window geometry, and a synthetic sweep over trajectories with an analytic speed.
 
-**Stage 2 — release measurement (truth unknown).** That characterized probe is applied unchanged — `W=5`, `p=3`, no per-dataset retuning — to each public release. The residual against the release's published velocity is read as a measurement *of the release*, never as a score for the probe and never as an accuracy verdict. Where pose and velocity share a smoother, the audit reports the case as undecidable rather than as agreement.
+**Stage 2 — release measurement (truth unknown).** That characterized probe is applied unchanged — `W=5`, `p=3`, no per-dataset retuning — to each public release. The residual against the release's published velocity is read as a measurement *of the release*, never as a score for the probe and never as an accuracy verdict. Pose and published velocity come out of the same fusion stage in five of the seven releases and the documentation does not settle the question in the other two, so the residual is reported as a consistency measurement and not as evidence about the physical accuracy of either channel.
 
 "Unchanged" fixes the window's **duration**, not its sample count: `W=5` spans 1.0 s at the 10 Hz analysis cadence, and a release published at a higher rate is decimated to that cadence before the probe runs. Pit30M publishes at 100 Hz, where the same `W=5` would span 0.1 s and leave the probe barely distinguishable from central differencing; `scripts/pit30m_build_10hz.py` puts it on the analysis cadence, and `scripts/pit30m_stride_offset_sensitivity.py` shows the choice of decimation phase moves the result by 5.2 percentage points and the smoothness ratio not at all.
 
@@ -20,7 +20,7 @@ No step treats a published velocity as ground truth. None of the audited release
 
 ```
 src/velref/       probe, metrics, dataset readers, audit core
-scripts/          per-dataset processing, table generation, and figures (41 scripts)
+scripts/          per-dataset processing, table generation, and figures (49 scripts)
 results/          the analysis outputs the paper reports
 tests/            synthetic truth-known regression test
 ```
@@ -64,11 +64,9 @@ The generators for the paper's main tables are:
 | `antialias_control.py` | `antialias_control.csv` | the anti-aliasing control on the two releases published above the analysis cadence |
 | `lowspeed_exclusion_control.py` | `lowspeed_exclusion_control.csv` | the low-speed exclusion control behind L4: `M_4` and `Delta` recomputed with every sample below 0.3 m/s removed |
 | `reviewer_response_checks.py` | `reviewer_r1_checks/*.csv` | the window-span sweep, the duration-matched Savitzky–Golay baseline, the latency sweep read from central differencing alone, and the label-versus-covariate rank comparison |
-
-`scripts/verify_references.py` is the one script here that reads nothing under
-`results/`. It checks every entry of the paper's bibliography, committed as
-`paper/ref.bib`, against CrossRef and the arXiv API — year, venue, first author,
-volume and page range — and reports what disagrees. Run it with no arguments.
+| `shift_quadrature_control.py` | `shift_quadrature_control.csv`, `shift_synthetic_control.csv` | the control that separates the two readings of the time-shift sweep: whether the collapse of the relative difference carries information about the release, or follows from a common error entering both residuals in quadrature |
+| `matched_horizontal_speed.py` | `matched_horizontal_speed.csv` | the recomputation of the two OXTS releases against a matched horizontal-speed reference, with the reverse-travel and lateral-motion breakdown |
+| `detail_checks_r2_6.py` | `chord_arc_bias.csv`, `m1_precision.csv`, `shift_valid_interval.csv` | the chord-versus-arc sampling bias, the precision of the synthetic-stage variance ratio, and the valid interval of the shifted comparison |
 | `make_two_stage_figure.py` | `fig_two_stage.pdf` | Figure 1, the two-stage schematic |
 | `make_curvature_fig.py` | `fig_curvature_bins.pdf` | Figure 2, the curvature-binned response |
 | `make_regime_figure.py` | `fig_regime_overview.pdf` | Figure 3, the regime overview |
@@ -76,6 +74,15 @@ volume and page range — and reports what disagrees. Run it with no arguments.
 Every figure in the paper is drawn by one of the last three, and each of those
 reads its values from the CSVs above rather than carrying a transcribed copy, so
 a figure cannot drift out of step with the table it illustrates.
+
+Two scripts read nothing under `results/`. `scripts/verify_references.py` checks
+every entry of the paper's bibliography, committed as `paper/ref.bib`, against
+CrossRef and the arXiv API — year, venue, author list, volume and page range —
+and reports what disagrees; run it with no arguments.
+`scripts/fetch_remote_zip_subset.py` pulls a named subset of files out of a
+remote archive over HTTP range requests, which is how the OXTS text records for
+the matched-reference recomputation were obtained from releases distributed as
+single multi-gigabyte archives.
 
 One row in that table means something different from the rest. Every `produces`
 entry above is a file committed here except `results/pit30m_10hz/`, which is a
@@ -131,7 +138,7 @@ uninterpretable.
 - `reviewer_r1_checks/` — the four checks the first review round asked for: the
   probe's window span swept over 0.6, 1.0 and 1.4 s on all seven releases, the
   duration-matched Savitzky–Golay baseline, the latency sweep read from central
-  differencing alone, and the coupling label against the release-level
+  differencing alone, and the provenance label against the release-level
   covariates that could carry the same ordering.
 - `dr/` — dead-reckoning drift, the downstream-consequence check.
 - `oxford/`, `oxford_x11/`, `nuscenes_x20/`, `boreas/`, `kitti360/`, `pit30m/`
@@ -148,7 +155,9 @@ So that boundary is checkable rather than merely declared, `results/per_frame_ma
 
 ## Scope and limitations
 
-The empirical statements are about the seven releases examined. The protocol is stated so that others can run it, but its conclusions are not claimed to extend to releases we did not audit. Provenance labels are assigned by reading each release's documentation before the probe is run; where documentation does not support a label, the protocol returns `unclassified` rather than guessing, and that release is excluded from the coupling comparison.
+The empirical statements are about the seven releases examined. The protocol is stated so that others can run it, but its conclusions are not claimed to extend to releases we did not audit.
+
+Provenance labels are read out of each release's own documentation before the probe is run, and the label records what that documentation states rather than what the measurement suggests. Five of the seven releases document a pose and a published velocity that leave the same fusion stage; for Oxford RobotCar's RTK product and for nuScenes the documentation does not settle it, and those two are labelled undetermined rather than assigned. No release in the corpus documents a separately produced velocity channel, so the corpus supports no contrast between jointly and separately produced releases, and the residual spread across the seven is not read as evidence for one.
 
 ## AI assistance
 
