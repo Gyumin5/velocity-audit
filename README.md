@@ -132,7 +132,7 @@ uninterpretable.
   from, plus `audited_sequences.csv` and `per_frame_manifest.csv`.
 - `l10/`, `l10_sg_sweep/` — Stage 1. The synthetic truth-known sweep and the
   Savitzky–Golay comparison sweep, both reproducible with no external data.
-- `helipr/` — the in-depth separated-regime case study, including the spectral
+- `helipr/` — the in-depth HeLiPR case study, including the spectral
   and degradation checks.
 - `av2/`, `durlar/`, `ncd/` — the three pose-only external checks reported as
   supplementary evidence for the smoothness band.
