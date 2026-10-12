@@ -68,6 +68,7 @@ The generators for the paper's main tables are:
 | `matched_horizontal_speed.py` | `matched_horizontal_speed.csv` | the recomputation of the two OXTS releases against a matched horizontal-speed reference, with the reverse-travel and lateral-motion breakdown |
 | `detail_checks_r2_6.py` | `chord_arc_bias.csv`, `m1_precision.csv`, `shift_valid_interval.csv`, `shift_common_interval.csv` | the chord-versus-arc sampling bias, the precision of the synthetic-stage variance ratio, the valid interval of each single shift, and the interval common to all seven shifts, which is what the sweep is scored on |
 | `bootstrap_unit_control.py` | `bootstrap_unit_control.csv` | the Pit30M resampling unit: segments against the 12 source logs they come from |
+| `interior_slice_control.py` | `interior_slice_control.csv` | the interior-slice convention of Table 1: each release's `M_4` and `Delta` on the full stored series and on the series with the first and last max(10, n/50) samples dropped |
 | `helipr_shared_source_check.py` | `helipr_shared_source_check.csv` | the check that HeLiPR's pose and its published velocity are the same INS solution read twice |
 | `make_two_stage_figure.py` | `fig_two_stage.pdf` | Figure 1, the two-stage schematic |
 | `make_curvature_fig.py` | `fig_curvature_bins.pdf` | Figure 2, the curvature-binned response |
