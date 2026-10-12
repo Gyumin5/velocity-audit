@@ -37,7 +37,7 @@ RESULTS = Path(__file__).resolve().parents[1] / "results"
 PROVENANCE_OF = {
     "HeLiPR": "joint", "Oxford": "undetermined",
     "nuScenes": "undetermined", "KITTI": "joint", "KITTI-360": "joint",
-    "Boreas": "joint", "Pit30M": "joint",
+    "Boreas": "joint", "Pit30M": "undetermined",
 }
 DISPLAY_NAME = {"KITTI": "KITTI raw"}
 

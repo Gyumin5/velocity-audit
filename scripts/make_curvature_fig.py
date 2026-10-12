@@ -2,8 +2,8 @@
 """Fig 1: cross-dataset curvature-binned RMSE reduction (cycle 25 redesign).
 
 Two side-by-side panels (no broken axis, no grouped bars):
-  Left  (wide): the 5 non-batch-joint releases as line+marker. y-range close to data.
-  Right (narrow): the 2 batch-joint releases, whose residual grows in every bin
+  Left  (wide): the 5 releases whose residual falls or barely moves. y-range close to data.
+  Right (narrow): the 2 releases whose residual grows in every bin
   and runs an order of magnitude off the left panel's scale.
 
 Plot-speaks-for-itself: lines show how the residual change behaves across curvature bins.
@@ -99,8 +99,9 @@ def main():
                    handlelength=2.2, columnspacing=0.9)
     ax_main.set_title("5 audited datasets", fontsize=9, pad=2)
 
-    # The two batch-joint releases share this panel: both move away from the
-    # published channel in every bin, at a scale the left panel cannot hold.
+    # These two share this panel because of what they measure, not how they are
+    # labelled: both move away from the published channel in every bin, at a
+    # scale the left panel cannot hold.
     for ds in ["Boreas", "Pit30M"]:
         ax_bor.plot(xs, DATA[ds], label=ds, **STYLE[ds])
     ax_bor.axhline(0, color="0.45", lw=0.6)
@@ -113,7 +114,7 @@ def main():
                            rotation_mode="anchor")
     ax_bor.tick_params(axis="y", labelsize=8)
     ax_bor.grid(True, axis="y", lw=0.3, ls=":", color="0.7")
-    ax_bor.set_title("batch joint", fontsize=9, pad=2)
+    ax_bor.set_title("residual grows in every bin", fontsize=8, pad=2)
     ax_bor.set_xlabel(r"$|\kappa|$ bin", fontsize=8)
 
     # A legend entry whose series is off its panel's y-range points at nothing.

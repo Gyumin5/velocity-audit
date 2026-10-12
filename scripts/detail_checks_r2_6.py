@@ -138,6 +138,34 @@ def shift_interval(name: str, subdir: str, ref_col: str) -> list[dict]:
     return rows
 
 
+def common_interval(name: str, subdir: str, ref_col: str) -> dict:
+    """Retained fraction on the interval the sweep actually evaluates.
+
+    shift_interval() reports each shift against the unshifted stream, which is
+    not the support the sweep uses: shift_quadrature_control.py intersects the
+    valid masks of all seven shifts first so that every shift is scored on one
+    interval.  That intersection drops both ends, so it is strictly smaller than
+    any single shift's mask, and the two numbers must not be quoted for each
+    other.
+    """
+    keep, dropped = [], []
+    for _, d in streams(subdir):
+        t = d["t"].to_numpy()
+        m = np.isfinite(d["v_central"].to_numpy()) & np.isfinite(d["v_family_a_W5"].to_numpy())
+        for s in SHIFTS:
+            m &= np.isfinite(np.interp(t, t + s, d[ref_col].to_numpy(),
+                                       left=np.nan, right=np.nan))
+        keep.append(m.sum() / t.size)
+        dropped.append(t.size - m.sum())
+    return {
+        "dataset": name,
+        "n_sequences": len(keep),
+        "retained_fraction_min": float(np.min(keep)),
+        "retained_fraction_median": float(np.median(keep)),
+        "frames_dropped_median": float(np.median(dropped)),
+    }
+
+
 def m1_precision() -> list[dict]:
     """M1 of every operator in tab:helipr-main, unrounded.
 
@@ -165,7 +193,7 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=REPO_ROOT / "results")
     args = ap.parse_args()
 
-    chord, interval = [], []
+    chord, interval, common = [], [], []
     print("chord-to-arc bias over the central baseline (2 dt), measured per frame")
     for name, subdir, ref_col in DATASETS:
         if not list((REPO_ROOT / "results" / subdir).glob("per_frame_*.parquet")):
@@ -179,6 +207,7 @@ def main() -> None:
               f"= {row['rms_bias_over_residual']*100:.3f}% of the central residual "
               f"(worst frame {row['max_bias_over_residual']*100:.2f}%)")
         interval.extend(shift_interval(name, subdir, ref_col))
+        common.append(common_interval(name, subdir, ref_col))
 
     print("\nvalid comparison interval under the shift")
     for r in interval:
@@ -188,6 +217,12 @@ def main() -> None:
                   f"dropped {r['frames_dropped_median']:.0f} frames  "
                   f"same mask for both operators: {r['operators_share_mask']}")
 
+    print("\ncommon interval across all seven shifts (what the sweep scores on)")
+    for r in common:
+        print(f"  {r['dataset']:<10} retained {r['retained_fraction_median']*100:.2f}% "
+              f"(worst sequence {r['retained_fraction_min']*100:.2f}%)  "
+              f"dropped {r['frames_dropped_median']:.0f} frames")
+
     m1 = m1_precision()
     print("\nM1 of tab:helipr-main at full precision (median over six sequences)")
     for r in m1:
@@ -196,9 +231,10 @@ def main() -> None:
 
     pd.DataFrame(chord).to_csv(args.out / "chord_arc_bias.csv", index=False)
     pd.DataFrame(interval).to_csv(args.out / "shift_valid_interval.csv", index=False)
+    pd.DataFrame(common).to_csv(args.out / "shift_common_interval.csv", index=False)
     pd.DataFrame(m1).to_csv(args.out / "m1_precision.csv", index=False)
-    print(f"\nwrote {args.out/'chord_arc_bias.csv'}, {args.out/'shift_valid_interval.csv'} "
-          f"and {args.out/'m1_precision.csv'}")
+    print(f"\nwrote {args.out/'chord_arc_bias.csv'}, {args.out/'shift_valid_interval.csv'}, "
+          f"{args.out/'shift_common_interval.csv'} and {args.out/'m1_precision.csv'}")
 
 
 if __name__ == "__main__":

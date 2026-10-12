@@ -66,7 +66,9 @@ The generators for the paper's main tables are:
 | `reviewer_response_checks.py` | `reviewer_r1_checks/*.csv` | the window-span sweep, the duration-matched Savitzky–Golay baseline, the latency sweep read from central differencing alone, and the label-versus-covariate rank comparison |
 | `shift_quadrature_control.py` | `shift_quadrature_control.csv`, `shift_synthetic_control.csv` | the control that separates the two readings of the time-shift sweep: whether the collapse of the relative difference carries information about the release, or follows from a common error entering both residuals in quadrature |
 | `matched_horizontal_speed.py` | `matched_horizontal_speed.csv` | the recomputation of the two OXTS releases against a matched horizontal-speed reference, with the reverse-travel and lateral-motion breakdown |
-| `detail_checks_r2_6.py` | `chord_arc_bias.csv`, `m1_precision.csv`, `shift_valid_interval.csv` | the chord-versus-arc sampling bias, the precision of the synthetic-stage variance ratio, and the valid interval of the shifted comparison |
+| `detail_checks_r2_6.py` | `chord_arc_bias.csv`, `m1_precision.csv`, `shift_valid_interval.csv`, `shift_common_interval.csv` | the chord-versus-arc sampling bias, the precision of the synthetic-stage variance ratio, the valid interval of each single shift, and the interval common to all seven shifts, which is what the sweep is scored on |
+| `bootstrap_unit_control.py` | `bootstrap_unit_control.csv` | the Pit30M resampling unit: segments against the 12 source logs they come from |
+| `helipr_shared_source_check.py` | `helipr_shared_source_check.csv` | the check that HeLiPR's pose and its published velocity are the same INS solution read twice |
 | `make_two_stage_figure.py` | `fig_two_stage.pdf` | Figure 1, the two-stage schematic |
 | `make_curvature_fig.py` | `fig_curvature_bins.pdf` | Figure 2, the curvature-binned response |
 | `make_regime_figure.py` | `fig_regime_overview.pdf` | Figure 3, the regime overview |

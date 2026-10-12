@@ -1,5 +1,34 @@
 # Changelog
 
+## v1.10-access
+
+Three result files and two scripts added, and the shifted comparison re-scored on
+one common interval.
+
+`detail_checks_r2_6.py` now also writes `shift_common_interval.csv`. The sweep
+compares seven time shifts, and each shift leaves a different set of frames
+valid; scoring every shift on its own mask would compare different intervals to
+each other. The sweep is therefore run per sequence on the intersection of all
+seven masks. That intersection trims ten to twelve frames in the median and is
+smaller than any single shift's mask: the median retained fraction is 99.5% or
+better on six releases and 94.4% on nuScenes, and the least-retained single
+sequence keeps 91.4% (Pit30M, whose segments are the shortest in the corpus).
+The consequence is that the sweep's zero-shift column is not the same statistic
+as the cross-dataset table, which is computed on each release's own untrimmed
+mask: the two agree to within 0.25 percentage points on six releases, while
+Pit30M reads +93.8% in the sweep against +76.9% in the table.
+
+`bootstrap_unit_control.py` and `bootstrap_unit_control.csv` record the Pit30M
+resampling unit. Its 53 segments come from 12 source logs, so segments are not
+independent draws; resampling logs instead of segments gives [+50, +100] rather
+than [+53, +108].
+
+`helipr_shared_source_check.py` and `helipr_shared_source_check.csv` record the
+check behind HeLiPR's joint-production label: its LiDAR-rate pose is the INS
+position B-spline-interpolated to each LiDAR's acquisition time, so the published
+INSPVA velocity is the same solution read a second time. No release in the corpus
+is left documented as producing its pose and its speed separately.
+
 ## v1.9-access
 
 The second review round. Four scripts and six result files, and one reading of an
